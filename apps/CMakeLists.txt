@@ -1,3 +1,3 @@
-add_executable(app app.cc)
+add_executable(app app.cpp)
 
 target_link_libraries(app PRIVATE libquadtree)
