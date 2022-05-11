@@ -2,14 +2,12 @@
 
 #include "hello.hpp"
 #include "image.hpp"
+#include "quadtree.hpp"
 
 int main() {
     hello();
 
-    {
-        Image img("foo.jpeg");
-        // img's destructor should free img's data
-    }
+    Quadtree root("image.jpg");
 
     return 0;
 }

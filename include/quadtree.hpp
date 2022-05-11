@@ -1,0 +1,20 @@
+#pragma once
+
+#include <string>
+
+struct RGB {
+    unsigned char R, G, B;
+};
+
+class Quadtree {
+  private:
+    RGB** image;
+    int width;
+    int height;
+    int x;
+    int y;
+
+  public:
+    // Constructs the root of the quadtree, loading the image specified by the filename.
+    Quadtree(const std::string& filename);
+};
