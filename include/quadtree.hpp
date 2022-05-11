@@ -1,22 +1,18 @@
 #pragma once
 
-#include <string>
+#include "image.hpp"
 
-struct RGB {
-    unsigned char R, G, B;
-};
+#include <string>
 
 class Quadtree {
   private:
-    RGB** image;
-    int width;
-    int height;
-    int x;
-    int y;
+    Image image;
 
   public:
     // Constructs the root of the quadtree, loading the image specified by the filename.
     Quadtree(const std::string& filename);
+    int width();
+    int height();
     // Returns the number of pixels of the image represented by this subquadrant.
     int n_pixels();
     // Writes the quadtree's content to an image specified by the filename.
