@@ -17,4 +17,6 @@ class Quadtree {
   public:
     // Constructs the root of the quadtree, loading the image specified by the filename.
     Quadtree(const std::string& filename);
+    // Returns the number of pixels of the image represented by this subquadrant.
+    int n_pixels();
 };

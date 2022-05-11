@@ -38,3 +38,7 @@ Quadtree::Quadtree(const std::string& filename) {
 
     std::cout << "width: " << width << ", height: " << height << "\n";
 }
+
+int Quadtree::n_pixels() {
+    return width * height;
+}
