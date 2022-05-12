@@ -11,14 +11,12 @@ Quadtree::Quadtree(const std::string& filename) : image(Image(filename)), depth(
 #ifndef NDEBUG
     n_quadtrees++;
 #endif
-    build();
 }
 
 Quadtree::Quadtree(Image image, int depth) : image(image), depth(depth) {
 #ifndef NDEBUG
     n_quadtrees++;
 #endif
-    build();
 }
 
 int Quadtree::width() {
@@ -43,9 +41,13 @@ void Quadtree::build() {
         std::cout << depth << "/" << n_quadtrees << ": quadtree should split\n";
 #endif
         nw = new Quadtree(image.nw(), depth + 1);
+        nw->build();
         ne = new Quadtree(image.ne(), depth + 1);
+        ne->build();
         se = new Quadtree(image.se(), depth + 1);
+        se->build();
         sw = new Quadtree(image.sw(), depth + 1);
+        sw->build();
     } else {
 #ifndef NDEBUG
         std::cout << depth << "/" << n_quadtrees << ": quadtree should fill\n";
