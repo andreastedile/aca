@@ -12,8 +12,8 @@ class Quadtree {
 #ifndef NDEBUG
     static unsigned n_quadtrees;
 #endif
-
     Image image;
+    Quadtree *nw, *ne, *se, *sw;
 
   public:
     // Constructs the root of the quadtree, loading the image specified by the filename.

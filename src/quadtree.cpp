@@ -42,10 +42,10 @@ void Quadtree::build() {
 #ifndef NDEBUG
         std::cout << depth << "/" << n_quadtrees << ": quadtree should split\n";
 #endif
-        Quadtree nw(image.nw(), depth + 1);
-        Quadtree ne(image.ne(), depth + 1);
-        Quadtree se(image.se(), depth + 1);
-        Quadtree sw(image.sw(), depth + 1);
+        nw = new Quadtree(image.nw(), depth + 1);
+        ne = new Quadtree(image.ne(), depth + 1);
+        se = new Quadtree(image.se(), depth + 1);
+        sw = new Quadtree(image.sw(), depth + 1);
     } else {
 #ifndef NDEBUG
         std::cout << depth << "/" << n_quadtrees << ": quadtree should fill\n";
