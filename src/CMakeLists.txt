@@ -4,7 +4,9 @@ add_library(libquadtree
     ${PROJECT_SOURCE_DIR}/include/image.hpp
     image.cpp
     ${PROJECT_SOURCE_DIR}/include/quadtree.hpp
-    quadtree.cpp)
+    quadtree.cpp
+    ${PROJECT_SOURCE_DIR}/include/rgb.hpp
+    rgb.cpp)
 
 target_include_directories(libquadtree PUBLIC "${stb_SOURCE_DIR}")
 

@@ -1,9 +1,25 @@
 #include "quadtree.hpp"
 #include "image.hpp"
+#include "rgb.hpp"
 
+#ifndef NDEBUG
 #include <iostream>
+unsigned Quadtree::n_quadtrees = 0;
+#endif
 
-Quadtree::Quadtree(const std::string& filename) : image(Image(filename)) {}
+Quadtree::Quadtree(const std::string& filename) : image(Image(filename)), depth(0) {
+#ifndef NDEBUG
+    n_quadtrees++;
+#endif
+    build();
+}
+
+Quadtree::Quadtree(Image image, int depth) : image(image), depth(depth) {
+#ifndef NDEBUG
+    n_quadtrees++;
+#endif
+    build();
+}
 
 int Quadtree::width() {
     return image.w;
@@ -19,4 +35,29 @@ int Quadtree::n_pixels() {
 
 void Quadtree::write_to_file(const std::string& filename) {
     image.write_to_file(filename);
+}
+
+void Quadtree::build() {
+    if (should_split()) {
+#ifndef NDEBUG
+        std::cout << depth << "/" << n_quadtrees << ": quadtree should split\n";
+#endif
+        Quadtree nw(image.nw(), depth + 1);
+        Quadtree ne(image.ne(), depth + 1);
+        Quadtree se(image.se(), depth + 1);
+        Quadtree sw(image.sw(), depth + 1);
+    } else {
+#ifndef NDEBUG
+        std::cout << depth << "/" << n_quadtrees << ": quadtree should fill\n";
+#endif
+        Vec3 mean = image.compute_mean();
+        image.fill(mean);
+    }
+}
+
+bool Quadtree::should_split() {
+    if (depth == MAX_DEPTH)
+        return false;
+    Vec3 mean = image.compute_mean();
+    return mean.R > DETAIL_THRESHOLD && mean.G > DETAIL_THRESHOLD && mean.B > DETAIL_THRESHOLD;
 }
