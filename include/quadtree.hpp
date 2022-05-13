@@ -12,14 +12,14 @@ class Quadtree {
 #ifndef NDEBUG
     static unsigned n_quadtrees;
 #endif
+    // Constructs a quadtree internal node.
+    Quadtree(Image image, int depth);
     Image image;
     Quadtree *nw, *ne, *se, *sw;
 
   public:
     // Constructs the root of the quadtree, loading the image specified by the filename.
     Quadtree(const std::string& filename);
-    // Constructs a quadtree internal node.
-    Quadtree(Image image, int depth);
     // Depth of this subquadrant in the quadtree
     const int depth;
     int width();

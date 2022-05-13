@@ -6,6 +6,7 @@
 
 class Image {
   private:
+    Image(RGB* data, int W, int H, int row_offset, int col_offset, int w, int h);
     RGB* data;
     // Width of the original image
     int W;
@@ -23,7 +24,6 @@ class Image {
     int h;
     int n_pixels() const;
     Image(const std::string& file_name);
-    Image(RGB* data, int W, int H, int row_offset, int col_offset, int w, int h);
     RGB& operator()(unsigned row, unsigned col);
     RGB operator()(unsigned row, unsigned col) const;
     void write_to_file(const std::string& filename) const;
