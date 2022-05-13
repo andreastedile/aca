@@ -9,7 +9,9 @@
 #include "stb_image_write.h"
 
 #include <exception>
+#ifndef NDEBUG
 #include <iostream>
+#endif
 
 Image::Image(const std::string& filename) {
     int n;
@@ -20,7 +22,7 @@ Image::Image(const std::string& filename) {
         return;
     }
 
-    this->data = new RGB[w * h];
+    this->data = std::shared_ptr<RGB[]>(new RGB[w * h]);
 
     for (int i = 0; i < n_pixels(); i++) {
         this->data[i].R = data[i * 3 + 0];
@@ -36,11 +38,19 @@ Image::Image(const std::string& filename) {
     W = w;
     H = h;
 
+#ifndef NDEBUG
     std::cout << "width: " << w << ", height: " << h << "\n";
+#endif
 }
 
-Image::Image(RGB* data, int W, int H, int row_offset, int col_offset, int w, int h)
+Image::Image(std::shared_ptr<RGB[]> data, int W, int H, int row_offset, int col_offset, int w, int h)
     : data(data), W(W), H(H), row_offset(row_offset), col_offset(col_offset), w(w), h(h) {
+}
+
+Image::~Image() {
+#ifndef NDEBUG
+    std::cout << data.use_count() - 1 << "\n";
+#endif
 }
 
 int Image::n_pixels() const {
@@ -127,15 +137,15 @@ void Image::fill(Vec3 color) {
     }
 }
 
-Image Image::nw() {
-    return Image(data, W, H, row_offset, col_offset, w / 2, h / 2);
+Image* Image::nw() {
+    return new Image(data, W, H, row_offset, col_offset, w / 2, h / 2);
 }
-Image Image::ne() {
-    return Image(data, W, H, row_offset, col_offset + w / 2, w / 2, h / 2);
+Image* Image::ne() {
+    return new Image(data, W, H, row_offset, col_offset + w / 2, w / 2, h / 2);
 }
-Image Image::se() {
-    return Image(data, W, H, row_offset + h / 2, col_offset + w / 2, w / 2, h / 2);
+Image* Image::se() {
+    return new Image(data, W, H, row_offset + h / 2, col_offset + w / 2, w / 2, h / 2);
 }
-Image Image::sw() {
-    return Image(data, W, H, row_offset + h / 2, col_offset, w / 2, h / 2);
+Image* Image::sw() {
+    return new Image(data, W, H, row_offset + h / 2, col_offset, w / 2, h / 2);
 }

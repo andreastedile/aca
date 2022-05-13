@@ -4,22 +4,24 @@
 
 #include <string>
 
-#define MAX_DEPTH 8
+#define MAX_DEPTH 1
 #define DETAIL_THRESHOLD 13
 
 class Quadtree {
   private:
 #ifndef NDEBUG
     static unsigned n_quadtrees;
+    unsigned id;
 #endif
     // Constructs a quadtree internal node.
-    Quadtree(Image image, int depth);
-    Image image;
+    Quadtree(Image* image, int depth);
+    Image* const image;
     Quadtree *nw, *ne, *se, *sw;
 
   public:
     // Constructs the root of the quadtree, loading the image specified by the filename.
     Quadtree(const std::string& filename);
+    ~Quadtree();
     // Depth of this subquadrant in the quadtree
     const int depth;
     int width();

@@ -2,12 +2,13 @@
 
 #include "rgb.hpp"
 
+#include <memory>
 #include <string>
 
 class Image {
   private:
-    Image(RGB* data, int W, int H, int row_offset, int col_offset, int w, int h);
-    RGB* data;
+    Image(std::shared_ptr<RGB[]> data, int W, int H, int row_offset, int col_offset, int w, int h);
+    std::shared_ptr<RGB[]> data;
     // Width of the original image
     int W;
     // Height of the original image
@@ -24,6 +25,7 @@ class Image {
     int h;
     int n_pixels() const;
     Image(const std::string& file_name);
+    ~Image();
     RGB& operator()(unsigned row, unsigned col);
     RGB operator()(unsigned row, unsigned col) const;
     void write_to_file(const std::string& filename) const;
@@ -33,8 +35,8 @@ class Image {
     Vec3 compute_mean() const;
     Vec3 compute_sq_mean() const;
     Vec3 compute_stddev() const;
-    Image nw();
-    Image ne();
-    Image se();
-    Image sw();
+    Image* nw();
+    Image* ne();
+    Image* se();
+    Image* sw();
 };
