@@ -2,6 +2,13 @@
 #include "image.hpp"
 #include "rgb.hpp"
 
+#ifdef PARALLEL
+#include <future>
+#ifndef MAX_PARALLELISM_DEPTH
+#define MAX_PARALLELISM_DEPTH 1
+#endif
+#endif
+
 #ifndef NDEBUG
 #include <iostream>
 unsigned Quadtree::n_quadtrees = 0;
@@ -41,13 +48,36 @@ void Quadtree::build() {
         std::cout << depth << "/" << n_quadtrees << ": quadtree should split\n";
 #endif
         nw = new Quadtree(image.nw(), depth + 1);
-        nw->build();
         ne = new Quadtree(image.ne(), depth + 1);
-        ne->build();
         se = new Quadtree(image.se(), depth + 1);
-        se->build();
         sw = new Quadtree(image.sw(), depth + 1);
+
+#ifdef PARALLEL
+        // Recursion: split into 4 subquadrants.
+
+        if (depth <= MAX_PARALLELISM_DEPTH) { // Don't overload the system.
+            // Spawn 3 threads, and assign 1 subquadrant to each of them.
+            std::future<void> ne_h = std::async(std::launch::async, &Quadtree::build, ne);
+            std::future<void> se_h = std::async(std::launch::async, &Quadtree::build, se);
+            std::future<void> sw_h = std::async(std::launch::async, &Quadtree::build, sw);
+            // Assign the remaining subquadrant to the current thread.
+            nw->build();
+
+            ne_h.get();
+            se_h.get();
+            sw_h.get();
+        } else {
+            nw->build();
+            ne->build();
+            se->build();
+            sw->build();
+        }
+#else
+        nw->build();
+        ne->build();
+        se->build();
         sw->build();
+#endif
     } else {
 #ifndef NDEBUG
         std::cout << depth << "/" << n_quadtrees << ": quadtree should fill\n";
