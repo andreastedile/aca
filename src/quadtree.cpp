@@ -14,14 +14,14 @@
 unsigned Quadtree::n_quadtrees = 0;
 #endif
 
-Quadtree::Quadtree(const std::string& filename) : image(new Image(filename)), depth(0) {
+Quadtree::Quadtree(const std::string& filename) : m_image(new Image(filename)), m_depth(0) {
 #ifndef NDEBUG
     n_quadtrees = 1;
     id = n_quadtrees;
 #endif
 }
 
-Quadtree::Quadtree(Image* image, int depth) : image(image), depth(depth) {
+Quadtree::Quadtree(Image* image, int depth) : m_image(image), m_depth(depth) {
 #ifndef NDEBUG
     n_quadtrees++;
     id = n_quadtrees;
@@ -29,85 +29,85 @@ Quadtree::Quadtree(Image* image, int depth) : image(image), depth(depth) {
 }
 
 Quadtree::~Quadtree() {
-    delete image;
+    delete m_image;
 }
 
-int Quadtree::width() {
-    return image->w;
+int Quadtree::width() const {
+    return m_image->m_w;
 }
 
-int Quadtree::height() {
-    return image->h;
+int Quadtree::height() const {
+    return m_image->m_h;
 }
 
-int Quadtree::n_pixels() {
+[[maybe_unused]] int Quadtree::n_pixels() const {
     return width() * height();
 }
 
-void Quadtree::write_to_file(const std::string& filename) {
-    image->write_to_file(filename);
+void Quadtree::write_to_file(const std::string& filename) const {
+    m_image->write_to_file(filename);
 }
 
-void Quadtree::build() {
+void Quadtree::build() { // NOLINT(misc-no-recursion)
     if (should_split()) {
 #ifndef NDEBUG
-        std::cout << depth << "/" << n_quadtrees << ": quadtree should split\n";
+        std::cout << m_depth << "/" << n_quadtrees << ": quadtree should split\n";
 #endif
-        nw = new Quadtree(image->nw(), depth + 1);
-        ne = new Quadtree(image->ne(), depth + 1);
-        se = new Quadtree(image->se(), depth + 1);
-        sw = new Quadtree(image->sw(), depth + 1);
+        m_nw = new Quadtree(m_image->nw(), m_depth + 1);
+        m_ne = new Quadtree(m_image->ne(), m_depth + 1);
+        m_se = new Quadtree(m_image->se(), m_depth + 1);
+        m_sw = new Quadtree(m_image->sw(), m_depth + 1);
 
 #ifdef PARALLEL
         // Recursion: split into 4 subquadrants.
 
-        if (depth <= MAX_PARALLELISM_DEPTH) { // Don't overload the system.
+        if (m_depth <= MAX_PARALLELISM_DEPTH) { // Don't overload the system.
             // Spawn 3 threads, and assign 1 subquadrant to each of them.
-            std::future<void> ne_h = std::async(std::launch::async, &Quadtree::build, ne);
-            std::future<void> se_h = std::async(std::launch::async, &Quadtree::build, se);
-            std::future<void> sw_h = std::async(std::launch::async, &Quadtree::build, sw);
+            std::future<void> ne_h = std::async(std::launch::async, &Quadtree::build, m_ne);
+            std::future<void> se_h = std::async(std::launch::async, &Quadtree::build, m_se);
+            std::future<void> sw_h = std::async(std::launch::async, &Quadtree::build, m_sw);
             // Assign the remaining subquadrant to the current thread.
-            nw->build();
-            delete nw;
+            m_nw->build();
+            delete m_nw;
 
             ne_h.get();
-            delete ne;
+            delete m_ne;
             se_h.get();
-            delete se;
+            delete m_se;
             sw_h.get();
-            delete sw;
+            delete m_sw;
         } else {
-            nw->build();
-            delete nw;
-            ne->build();
-            delete ne;
-            se->build();
-            delete se;
-            sw->build();
-            delete sw;
+            m_nw->build();
+            delete m_nw;
+            m_ne->build();
+            delete m_ne;
+            m_se->build();
+            delete m_se;
+            m_sw->build();
+            delete m_sw;
         }
 #else
-        nw->build();
-        delete nw;
-        ne->build();
-        delete ne;
-        se->build();
-        delete se;
-        sw->build();
-        delete sw;
+        m_nw->build();
+        delete m_nw;
+        m_ne->build();
+        delete m_ne;
+        m_se->build();
+        delete m_se;
+        m_sw->build();
+        delete m_sw;
 #endif
     } else {
 #ifndef NDEBUG
-        std::cout << depth << "/" << id << ": quadtree should fill\n";
+        std::cout << m_depth << "/" << id << ": quadtree should fill\n";
 #endif
-        Vec3 mean = image->compute_mean();
-        image->fill(mean);
+        Vec3 mean = m_image->compute_mean();
+        m_image->fill(mean);
     }
 }
 
-bool Quadtree::should_split() {
-    if (depth == MAX_DEPTH)
+bool Quadtree::should_split() const {
+    if (m_depth == MAX_DEPTH)
         return false;
-    Vec3 stddev = image->compute_stddev();
+    Vec3 stddev = m_image->compute_stddev();
     return stddev.R > DETAIL_THRESHOLD && stddev.G > DETAIL_THRESHOLD && stddev.B > DETAIL_THRESHOLD;
 }
