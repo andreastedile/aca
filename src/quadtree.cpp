@@ -108,6 +108,6 @@ void Quadtree::build() {
 bool Quadtree::should_split() {
     if (depth == MAX_DEPTH)
         return false;
-    Vec3 mean = image->compute_mean();
-    return mean.R > DETAIL_THRESHOLD && mean.G > DETAIL_THRESHOLD && mean.B > DETAIL_THRESHOLD;
+    Vec3 stddev = image->compute_stddev();
+    return stddev.R > DETAIL_THRESHOLD && stddev.G > DETAIL_THRESHOLD && stddev.B > DETAIL_THRESHOLD;
 }
