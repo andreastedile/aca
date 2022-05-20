@@ -8,7 +8,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-#include <exception>
+#include <stdexcept>
 #ifndef NDEBUG
 #include <iostream>
 #endif
@@ -17,8 +17,7 @@ Image::Image(const std::string& filename) {
     int n;
     unsigned char* data = stbi_load(filename.c_str(), &w, &h, &n, 3);
     if (!data) {
-        // Todo: throw execption instead
-        std::cerr << "File " << filename << " does not exist\n";
+        throw std::runtime_error("Could not open file " + filename);
         return;
     }
 
