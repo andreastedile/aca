@@ -20,6 +20,11 @@ class Quadtree {
     Quadtree* m_ne = nullptr;
     Quadtree* m_se = nullptr;
     Quadtree* m_sw = nullptr;
+    Vec3 m_sum{};
+    Vec3 m_sq_sum{};
+    Vec3 m_mean{};
+    Vec3 m_sq_mean{};
+    Vec3 m_stddev{};
 
   public:
     // Constructs the root of the quadtree, loading the m_image specified by the filename.
@@ -34,5 +39,5 @@ class Quadtree {
     // Writes the quadtree's content to an m_image specified by the filename.
     void write_to_file(const std::string& filename) const;
     void build();
-    [[nodiscard]] bool should_split() const;
+    [[nodiscard]] bool should_split();
 };

@@ -32,9 +32,9 @@ class Image {
     void fill(const Vec3& color);
     [[nodiscard]] Vec3 compute_sum() const;
     [[nodiscard]] Vec3 compute_sq_sum() const;
-    [[nodiscard]] Vec3 compute_mean() const;
-    [[nodiscard]] Vec3 compute_sq_mean() const;
-    [[nodiscard]] Vec3 compute_stddev() const;
+    [[nodiscard]] Vec3 compute_mean(const Vec3 &sum) const;
+    [[nodiscard]] Vec3 compute_sq_mean(const Vec3 &sq_sum) const;
+    [[nodiscard]] static Vec3 compute_stddev(const Vec3& mean, const Vec3& sq_mean);
     [[nodiscard]] Image* nw() const;
     [[nodiscard]] Image* ne() const;
     [[nodiscard]] Image* se() const;

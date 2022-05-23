@@ -100,14 +100,17 @@ void Quadtree::build() { // NOLINT(misc-no-recursion)
 #ifndef NDEBUG
         std::cout << m_depth << "/" << id << ": quadtree should fill\n";
 #endif
-        Vec3 mean = m_image->compute_mean();
-        m_image->fill(mean);
+        m_image->fill(m_mean);
     }
 }
 
-bool Quadtree::should_split() const {
+bool Quadtree::should_split() {
     if (m_depth == MAX_DEPTH)
         return false;
-    Vec3 stddev = m_image->compute_stddev();
-    return stddev.R > DETAIL_THRESHOLD && stddev.G > DETAIL_THRESHOLD && stddev.B > DETAIL_THRESHOLD;
+    m_sum = m_image->compute_sum();
+    m_sq_sum = m_image->compute_sq_sum();
+    m_mean = m_image->compute_mean(m_sum);
+    m_sq_mean = m_image->compute_sq_mean(m_sq_sum);
+    m_stddev = Image::compute_stddev(m_mean, m_sq_mean);
+    return m_stddev.R > DETAIL_THRESHOLD && m_stddev.G > DETAIL_THRESHOLD && m_stddev.B > DETAIL_THRESHOLD;
 }

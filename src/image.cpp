@@ -107,27 +107,16 @@ Vec3 Image::compute_sq_sum() const {
     return sq_sum;
 }
 
-Vec3 Image::compute_mean() const {
-    Vec3 mean = compute_sum();
-    mean.R /= n_pixels();
-    mean.G /= n_pixels();
-    mean.B /= n_pixels();
-    return mean;
+Vec3 Image::compute_mean(const Vec3& sum) const {
+    return {sum.R / n_pixels(), sum.G / n_pixels(), sum.B / n_pixels()};
 }
 
-Vec3 Image::compute_sq_mean() const {
-    Vec3 sq_mean = compute_sq_sum();
-    sq_mean.R /= n_pixels();
-    sq_mean.G /= n_pixels();
-    sq_mean.B /= n_pixels();
-    return sq_mean;
+Vec3 Image::compute_sq_mean(const Vec3& sq_sum) const {
+    return {sq_sum.R / n_pixels(), sq_sum.G / n_pixels(), sq_sum.B / n_pixels()};
 }
 
-Vec3 Image::compute_stddev() const {
-    Vec3 mean = compute_mean();
-    Vec3 sq_mean = compute_sq_mean();
-    Vec3 stddev(std::sqrt(sq_mean.R - pow(mean.R, 2)), std::sqrt(sq_mean.G - pow(mean.G, 2)), std::sqrt(sq_mean.B - pow(mean.B, 2)));
-    return stddev;
+Vec3 Image::compute_stddev(const Vec3& mean, const Vec3& sq_mean) {
+    return {std::sqrt(sq_mean.R - pow(mean.R, 2)), std::sqrt(sq_mean.G - pow(mean.G, 2)), std::sqrt(sq_mean.B - pow(mean.B, 2))};
 }
 
 void Image::fill(const Vec3& color) {
@@ -138,15 +127,15 @@ void Image::fill(const Vec3& color) {
     }
 }
 
-Image* Image::nw() const{
+Image* Image::nw() const {
     return new Image(m_data, m_W, m_H, m_row_offset, m_col_offset, m_w / 2, m_h / 2);
 }
-Image* Image::ne() const{
+Image* Image::ne() const {
     return new Image(m_data, m_W, m_H, m_row_offset, m_col_offset + m_w / 2, m_w / 2, m_h / 2);
 }
-Image* Image::se() const{
+Image* Image::se() const {
     return new Image(m_data, m_W, m_H, m_row_offset + m_h / 2, m_col_offset + m_w / 2, m_w / 2, m_h / 2);
 }
-Image* Image::sw() const{
+Image* Image::sw() const {
     return new Image(m_data, m_W, m_H, m_row_offset + m_h / 2, m_col_offset, m_w / 2, m_h / 2);
 }
