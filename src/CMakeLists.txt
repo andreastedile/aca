@@ -8,6 +8,10 @@ add_library(libquadtree
     ${PROJECT_SOURCE_DIR}/include/rgb.hpp
     rgb.cpp)
 
+if (PARALLEL)
+    target_compile_definitions(libquadtree PRIVATE PARALLEL)
+endif()
+
 target_include_directories(libquadtree PUBLIC "${stb_SOURCE_DIR}")
 
 target_include_directories(libquadtree PUBLIC ${PROJECT_SOURCE_DIR}/include)
