@@ -9,10 +9,5 @@ struct Vec3 {
 
 struct RGB {
     unsigned char R, G, B;
-    RGB& operator=(const Vec3& vec3) {
-        R = (unsigned char)vec3.R;
-        G = (unsigned char)vec3.G;
-        B = (unsigned char)vec3.B;
-        return *this;
-    }
+    RGB& operator=(const Vec3& vec3);
 };
