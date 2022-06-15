@@ -8,6 +8,8 @@ FetchContent_Declare(stb
 )
 FetchContent_MakeAvailable(stb)
 
+find_package(Eigen3 3.4 REQUIRED NO_MODULE)
+
 add_subdirectory(src)
 add_subdirectory(src-cuda)
 add_subdirectory(apps)
