@@ -34,22 +34,22 @@ class Quadtree {
              std::unique_ptr<const Quadtree> sw);
     };
     struct Leaf {
-        unsigned x, y, h, w;
+        unsigned i, j, n_rows, n_cols;
         color_t r, g, b;
-        Leaf(unsigned x, unsigned y, unsigned h, unsigned w, color_t r, color_t g, color_t b);
+        Leaf(unsigned i, unsigned j, unsigned n_rows, unsigned n_cols, color_t r, color_t g, color_t b);
     };
 
     // Depth of this node in the quadtree
     unsigned depth;
-    unsigned x, y;
-    unsigned h, w;
+    unsigned i, j;
+    unsigned n_rows, n_cols;
 
     using Empty = std::monostate;
     std::variant<Fork, Leaf, Empty> data;
 
-    Quadtree(unsigned depth, unsigned x, unsigned y, unsigned h, unsigned w);
+    Quadtree(unsigned depth, unsigned i, unsigned j, unsigned n_rows, unsigned n_cols);
 
-    Quadtree(unsigned h, unsigned w);
+    Quadtree(unsigned n_rows, unsigned n_cols);
 
     void build_quadtree(const RgbSoa& image, unsigned left, unsigned right);
 

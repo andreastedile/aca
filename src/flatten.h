@@ -5,21 +5,21 @@
 
 void flatten_data(uint8_t* data,
                   ColorVec& r, ColorVec& g, ColorVec& b,
-                  int x, int y,
-                  int h, int w,
-                  int& i,
-                  int W) {
-    if (w == 1) {
-        r(i) = data[(x * W + y) * 3 + 0];
-        g(i) = data[(x * W + y) * 3 + 1];
-        b(i) = data[(x * W + y) * 3 + 2];
-        i++;
+                  int i, int j,
+                  int n_rows, int n_cols,
+                  int& idx,
+                  int N_COLS) {
+    if (n_cols == 1) {
+        r(idx) = data[(i * N_COLS + j) * 3 + 0];
+        g(idx) = data[(i * N_COLS + j) * 3 + 1];
+        b(idx) = data[(i * N_COLS + j) * 3 + 2];
+        idx++;
     } else {
         // clang-format off
-        flatten_data(data, r, g, b, x +     0, y +     0, h / 2, w / 2, i, W); // nw
-        flatten_data(data, r, g, b, x +     0, y + w / 2, h / 2, w / 2, i, W); // ne
-        flatten_data(data, r, g, b, x + h / 2, y +     0, h / 2, w / 2, i, W); // sw
-        flatten_data(data, r, g, b, x + h / 2, y + w / 2, h / 2, w / 2, i, W); // se
+        flatten_data(data, r, g, b, i + 0,          j + 0,          n_rows / 2, n_cols / 2, idx, N_COLS); // nw
+        flatten_data(data, r, g, b, i + 0,          j + n_cols / 2, n_rows / 2, n_cols / 2, idx, N_COLS); // ne
+        flatten_data(data, r, g, b, i + n_rows / 2, j + 0,          n_rows / 2, n_cols / 2, idx, N_COLS); // sw
+        flatten_data(data, r, g, b, i + n_rows / 2, j + n_cols / 2, n_rows / 2, n_cols / 2, idx, N_COLS); // se
         // clang-format on
     }
 }

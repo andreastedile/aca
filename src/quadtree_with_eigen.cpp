@@ -23,18 +23,18 @@ Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Q
       n_leaves(nw->n_leaves() + ne->n_leaves() + sw->n_leaves() + se->n_leaves()) {
 }
 
-Quadtree::Leaf::Leaf(unsigned x, unsigned y, unsigned h, unsigned w, color_t r, color_t g, color_t b)
-    : x(x), y(y), h(h), w(w), r(r), g(g), b(b) {}
+Quadtree::Leaf::Leaf(unsigned i, unsigned j, unsigned n_rows, unsigned n_cols, color_t r, color_t g, color_t b)
+    : i(i), j(j), n_rows(n_rows), n_cols(n_cols), r(r), g(g), b(b) {}
 
-Quadtree::Quadtree(unsigned int depth, unsigned int x, unsigned int y, unsigned int h, unsigned int w)
-    : depth(depth), x(x), y(y), h(h), w(w), data(Empty{}) {
+Quadtree::Quadtree(unsigned int depth, unsigned int i, unsigned int j, unsigned int n_rows, unsigned int n_cols)
+    : depth(depth), i(i), j(j), n_rows(n_rows), n_cols(n_cols), data(Empty{}) {
 #ifndef NDEBUG
-    std::cout << "Create node. Depth: " << depth << ", x: " << x << ", y: " << y << ", h: " << h << ", w: " << w << '\n';
+    std::cout << "Create node. Depth: " << depth << ", x: " << i << ", y: " << j << ", h: " << n_rows << ", w: " << n_cols << '\n';
 #endif
 }
 
-Quadtree::Quadtree(unsigned int h, unsigned int w)
-    : Quadtree(0, 0, 0, h, w) {}
+Quadtree::Quadtree(unsigned int n_rows, unsigned int n_cols)
+    : Quadtree(0, 0, 0, n_rows, n_cols) {}
 
 void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right) {
     auto dim = right - left - 1;
@@ -57,10 +57,10 @@ void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right
         b_stddev > DETAIL_THRESHOLD) {
 
         // clang-format off
-        auto nw = std::make_unique<Quadtree>(depth + 1, x +     0, y +     0, h / 2, w / 2);
-        auto ne = std::make_unique<Quadtree>(depth + 1, x +     0, y + w / 2, h / 2, w / 2);
-        auto sw = std::make_unique<Quadtree>(depth + 1, x + h / 2, y +     0, h / 2, w / 2);
-        auto se = std::make_unique<Quadtree>(depth + 1, x + h / 2, y + w / 2, h / 2, w / 2);
+        auto nw = std::make_unique<Quadtree>(depth + 1, i +     0, j +     0, n_rows / 2, n_cols / 2);
+        auto ne = std::make_unique<Quadtree>(depth + 1, i +     0, j + n_cols / 2, n_rows / 2, n_cols / 2);
+        auto sw = std::make_unique<Quadtree>(depth + 1, i + n_rows / 2, j +     0, n_rows / 2, n_cols / 2);
+        auto se = std::make_unique<Quadtree>(depth + 1, i + n_rows / 2, j + n_cols / 2, n_rows / 2, n_cols / 2);
         // clang-format on
         auto child_dim = (right - left) / 4;
         nw->build_quadtree(image, left + 0 * child_dim, left + 1 * child_dim);
@@ -70,7 +70,7 @@ void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right
 
         data.emplace<Fork>(std::move(nw), std::move(ne), std::move(sw), std::move(se));
     } else {
-        data.emplace<Leaf>(x, y, h, w, r_mean, g_mean, b_mean);
+        data.emplace<Leaf>(i, j, n_rows, n_cols, r_mean, g_mean, b_mean);
     }
 }
 
