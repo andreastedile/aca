@@ -9,6 +9,8 @@ constexpr unsigned DETAIL_THRESHOLD = 13;
 #include <memory> // unique_ptr
 #include <variant>
 
+#include "printer.h"
+
 using color_t = uint8_t;
 
 // Array<typename Scalar, int RowsAtCompileTime, int ColsAtCompileTime>
@@ -49,6 +51,9 @@ class Quadtree {
     Quadtree(unsigned n_rows, unsigned n_cols);
 
     void build(const RgbSoa& image, unsigned left, unsigned right);
+
+  private:
+    Printer printer;
 };
 
 #endif // ACA_QUADTREE_WITH_EIGEN_H

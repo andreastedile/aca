@@ -19,10 +19,10 @@ Quadtree::Leaf::Leaf(color_t r, color_t g, color_t b)
     : r(r), g(g), b(b) {}
 
 Quadtree::Quadtree(unsigned int depth, unsigned int i, unsigned int j, unsigned int n_rows, unsigned int n_cols)
-    : depth(depth), i(i), j(j), n_rows(n_rows), n_cols(n_cols), data(Empty{}) {
-#ifndef NDEBUG
-    std::cout << "Create node. Depth: " << depth << ", x: " << i << ", y: " << j << ", h: " << n_rows << ", w: " << n_cols << '\n';
-#endif
+    : depth(depth), i(i), j(j), n_rows(n_rows), n_cols(n_cols), data(Empty{}), printer(depth * 2) {
+    printer.print_depth(depth);
+    printer.print_i_j(i, j);
+    printer.print_n_rows_n_cols(n_rows, n_cols);
 }
 
 Quadtree::Quadtree(unsigned int n_rows, unsigned int n_cols)
@@ -34,19 +34,23 @@ void Quadtree::build(const RgbSoa& image, unsigned left, unsigned right) {
     double r_mean = image.r.middleCols(left, dim).cast<double>().mean();
     double g_mean = image.g.middleCols(left, dim).cast<double>().mean();
     double b_mean = image.b.middleCols(left, dim).cast<double>().mean();
+    printer.print_mean(r_mean, g_mean, b_mean);
 
     double r_sq_mean = image.r.middleCols(left, dim).cast<double>().square().mean();
     double g_sq_mean = image.g.middleCols(left, dim).cast<double>().square().mean();
     double b_sq_mean = image.b.middleCols(left, dim).cast<double>().square().mean();
+    printer.print_sq_mean(r_sq_mean, g_sq_mean, b_sq_mean);
 
     double r_stddev = std::sqrt(r_sq_mean - std::pow(r_mean, 2));
     double g_stddev = std::sqrt(g_sq_mean - std::pow(g_mean, 2));
     double b_stddev = std::sqrt(b_sq_mean - std::pow(b_mean, 2));
+    printer.print_stdev(r_stddev, g_stddev, b_stddev);
 
     if (depth < MAX_DEPTH &&
         r_stddev > DETAIL_THRESHOLD &&
         g_stddev > DETAIL_THRESHOLD &&
         b_stddev > DETAIL_THRESHOLD) {
+        printer.print_split();
 
         // clang-format off
         auto nw = std::make_unique<Quadtree>(depth + 1, i +     0, j +     0, n_rows / 2, n_cols / 2);
@@ -62,6 +66,7 @@ void Quadtree::build(const RgbSoa& image, unsigned left, unsigned right) {
 
         data.emplace<Fork>(std::move(nw), std::move(ne), std::move(sw), std::move(se));
     } else {
+        printer.print_leaf();
         data.emplace<Leaf>(r_mean, g_mean, b_mean);
     }
 }
