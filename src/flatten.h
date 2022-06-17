@@ -5,39 +5,22 @@
 
 void flatten_data(uint8_t* data,
                   ColorVec& r, ColorVec& g, ColorVec& b,
-                  int top, int left,
-                  int w, int h,
+                  int x, int y,
+                  int h, int w,
                   int& i,
                   int W) {
     if (w == 1) {
-        r(i) = data[(top * W + left) * 3 + 0];
-        g(i) = data[(top * W + left) * 3 + 1];
-        b(i) = data[(top * W + left) * 3 + 2];
+        r(i) = data[(x * W + y) * 3 + 0];
+        g(i) = data[(x * W + y) * 3 + 1];
+        b(i) = data[(x * W + y) * 3 + 2];
         i++;
     } else {
-        flatten_data(data, r, g, b, top, left, w / 2, h / 2, i, W);
-        flatten_data(data, r, g, b, top, left + w / 2, w / 2, h / 2, i, W);
-        flatten_data(data, r, g, b, top + h / 2, left, w / 2, h / 2, i, W);
-        flatten_data(data, r, g, b, top + h / 2, left + w / 2, w / 2, h / 2, i, W);
-    }
-}
-
-void unflatten_data(uint8_t* data,
-                    ColorVec& r, ColorVec& g, ColorVec& b,
-                    int top, int left,
-                    int w, int h,
-                    int& i,
-                    int W) {
-    if (w == 1) {
-        data[(top * W + left) * 3 + 0] = r(i);
-        data[(top * W + left) * 3 + 1] = g(i);
-        data[(top * W + left) * 3 + 2] = b(i);
-        i++;
-    } else {
-        unflatten_data(data, r, g, b, top, left, w / 2, h / 2, i, W);
-        unflatten_data(data, r, g, b, top, left + w / 2, w / 2, h / 2, i, W);
-        unflatten_data(data, r, g, b, top + h / 2, left, w / 2, h / 2, i, W);
-        unflatten_data(data, r, g, b, top + h / 2, left + w / 2, w / 2, h / 2, i, W);
+        // clang-format off
+        flatten_data(data, r, g, b, x +     0, y +     0, h / 2, w / 2, i, W); // nw
+        flatten_data(data, r, g, b, x +     0, y + w / 2, h / 2, w / 2, i, W); // ne
+        flatten_data(data, r, g, b, x + h / 2, y +     0, h / 2, w / 2, i, W); // sw
+        flatten_data(data, r, g, b, x + h / 2, y + w / 2, h / 2, w / 2, i, W); // se
+        // clang-format on
     }
 }
 

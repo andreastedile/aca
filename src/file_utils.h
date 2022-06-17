@@ -20,4 +20,8 @@ uint8_t* read_file(const std::string& filename, int* w, int* h, int* n) {
     return data;
 }
 
+void write_file(const std::string& filename, int w, int h, uint8_t* data) {
+    stbi_write_jpg(filename.c_str(), w, h, 3, data, 100);
+}
+
 #endif // ACA_FILE_UTILS_H

@@ -8,7 +8,9 @@ add_library(libquadtree
         quadtree_with_eigen.cpp
         quadtree_with_eigen.h
         flatten.h
-        file_utils.h)
+        file_utils.h
+        colorizer.cpp
+        colorizer.h)
 
 if (PARALLEL)
     target_compile_definitions(libquadtree PRIVATE PARALLEL)
