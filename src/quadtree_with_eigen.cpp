@@ -7,24 +7,16 @@
 
 #include "quadtree_with_eigen.h"
 
-template <class... Ts>
-struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-template <class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
 RgbSoa::RgbSoa(ColorVec r, ColorVec g, ColorVec b)
     : r(std::move(r)), g(std::move(g)), b(std::move(b)) {}
 
 Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Quadtree> ne,
                      std::unique_ptr<const Quadtree> se, std::unique_ptr<const Quadtree> sw)
-    : nw(std::move(nw)), ne(std::move(ne)), se(std::move(se)), sw(std::move(sw)),
-      n_leaves(nw->n_leaves() + ne->n_leaves() + sw->n_leaves() + se->n_leaves()) {
+    : nw(std::move(nw)), ne(std::move(ne)), se(std::move(se)), sw(std::move(sw)) {
 }
 
-Quadtree::Leaf::Leaf(unsigned i, unsigned j, unsigned n_rows, unsigned n_cols, color_t r, color_t g, color_t b)
-    : i(i), j(j), n_rows(n_rows), n_cols(n_cols), r(r), g(g), b(b) {}
+Quadtree::Leaf::Leaf(color_t r, color_t g, color_t b)
+    : r(r), g(g), b(b) {}
 
 Quadtree::Quadtree(unsigned int depth, unsigned int i, unsigned int j, unsigned int n_rows, unsigned int n_cols)
     : depth(depth), i(i), j(j), n_rows(n_rows), n_cols(n_cols), data(Empty{}) {
@@ -70,38 +62,6 @@ void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right
 
         data.emplace<Fork>(std::move(nw), std::move(ne), std::move(sw), std::move(se));
     } else {
-        data.emplace<Leaf>(i, j, n_rows, n_cols, r_mean, g_mean, b_mean);
+        data.emplace<Leaf>(r_mean, g_mean, b_mean);
     }
-}
-
-std::vector<Quadtree::Leaf> Quadtree::get_leaves() const {
-    std::vector<Leaf> leaves(n_leaves(), {0, 0, 0, 0, 0, 0, 0});
-    get_leaves(leaves, 0);
-    return leaves;
-}
-
-void Quadtree::get_leaves(std::vector<Leaf>& leaves, unsigned i) const {
-    return std::visit(overloaded{
-                          [](const Quadtree::Empty& e) {},
-                          [&](const Quadtree::Leaf& l) { leaves[i] = l; },
-                          [&](const Quadtree::Fork& f) {
-                              f.nw->get_leaves(leaves, i);
-                              i += f.nw->n_leaves();
-                              f.ne->get_leaves(leaves, i);
-                              i += f.ne->n_leaves();
-                              f.se->get_leaves(leaves, i);
-                              i += f.se->n_leaves();
-                              f.sw->get_leaves(leaves, i);
-                          },
-                      },
-                      data);
-}
-
-unsigned Quadtree::n_leaves() const {
-    return std::visit(overloaded{
-                          [](const Quadtree::Empty& e) { return (unsigned)0; },
-                          [](const Quadtree::Leaf& l) { return (unsigned)1; },
-                          [](const Quadtree::Fork& f) { return f.n_leaves; },
-                      },
-                      data);
 }

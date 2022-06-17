@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
 
+#include "colorizer.h"
 #include "file_utils.h"
 #include "flatten.h"
 #include "quadtree_with_eigen.h"
-#include "colorizer.h"
 
 int main() {
     int w, h, n;
@@ -19,8 +19,6 @@ int main() {
     // fill red, green, blue color vectors
     flatten_data(data, r, g, b, 0, 0, w, h, 0, w);
 
-    stbi_image_free(data);
-
     RgbSoa image(std::move(r), std::move(g), std::move(b));
 
     std::cout << "Start quadtree build\n";
@@ -28,7 +26,7 @@ int main() {
     Quadtree root(h, w);
     root.build_quadtree(image, 0, n_pixels);
 
-    auto new_data = colorize(root);
+    colorize(data, root);
 
     auto end = std::chrono::steady_clock::now();
     std::cout << "Elapsed time in milliseconds: "
@@ -37,9 +35,9 @@ int main() {
 
     std::cout << "Writing file..." << std::endl;
 
-    write_file("result.jpg", w, h, new_data);
+    write_file("result.jpg", w, h, data);
 
-    stbi_image_free(new_data);
+    stbi_image_free(data);
 
     return 0;
 }

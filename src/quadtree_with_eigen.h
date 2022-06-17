@@ -23,7 +23,6 @@ struct RgbSoa {
 class Quadtree {
   public:
     struct Fork {
-        unsigned n_leaves;
         std::unique_ptr<const Quadtree> nw;
         std::unique_ptr<const Quadtree> ne;
         std::unique_ptr<const Quadtree> se;
@@ -34,9 +33,8 @@ class Quadtree {
              std::unique_ptr<const Quadtree> sw);
     };
     struct Leaf {
-        unsigned i, j, n_rows, n_cols;
         color_t r, g, b;
-        Leaf(unsigned i, unsigned j, unsigned n_rows, unsigned n_cols, color_t r, color_t g, color_t b);
+        Leaf(color_t r, color_t g, color_t b);
     };
 
     // Depth of this node in the quadtree
@@ -52,13 +50,6 @@ class Quadtree {
     Quadtree(unsigned n_rows, unsigned n_cols);
 
     void build_quadtree(const RgbSoa& image, unsigned left, unsigned right);
-
-    [[nodiscard]] std::vector<Leaf> get_leaves() const;
-
-    [[nodiscard]] unsigned n_leaves() const;
-
-  private:
-    void get_leaves(std::vector<Leaf>& leaves, unsigned i) const;
 };
 
 #endif // ACA_QUADTREE_WITH_EIGEN_H
