@@ -9,7 +9,6 @@ constexpr unsigned DETAIL_THRESHOLD = 13;
 #include <memory> // unique_ptr
 #include <variant>
 
-
 using color_t = uint8_t;
 
 // Array<typename Scalar, int RowsAtCompileTime, int ColsAtCompileTime>
@@ -17,7 +16,7 @@ using ColorVec = Eigen::Array<color_t, 1, Eigen::Dynamic>;
 
 struct RgbSoa {
     ColorVec r, g, b;
-    RgbSoa(ColorVec r, ColorVec g, ColorVec b);
+    RgbSoa(unsigned n_pixels);
 };
 
 class Quadtree {
@@ -49,7 +48,7 @@ class Quadtree {
 
     Quadtree(unsigned n_rows, unsigned n_cols);
 
-    void build_quadtree(const RgbSoa& image, unsigned left, unsigned right);
+    void build(const RgbSoa& image, unsigned left, unsigned right);
 };
 
 #endif // ACA_QUADTREE_WITH_EIGEN_H

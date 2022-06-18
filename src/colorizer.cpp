@@ -12,10 +12,14 @@ void colorize(uint8_t* data, const Quadtree& quadtree) {
         colorize(data, *fork.sw);
     };
     auto visit_leaf = [&](const Quadtree::Leaf& leaf) {
-        const auto i_to = quadtree.i + quadtree.n_rows;
-        const auto j_to = quadtree.j + quadtree.n_cols;
-        for (auto i = quadtree.i; i < i_to; i++) {
-            for (auto j = quadtree.j; j < j_to; j++) {
+        const auto i_from = quadtree.i;
+        const auto j_from = quadtree.j;
+
+        const auto i_to = i_from + quadtree.n_rows;
+        const auto j_to = j_from + quadtree.n_cols;
+
+        for (auto i = i_from; i < i_to; i++) {
+            for (auto j = j_from; j < j_to; j++) {
                 data[(i * quadtree.n_cols + j) * 3 + 0] = leaf.r;
                 data[(i * quadtree.n_cols + j) * 3 + 1] = leaf.g;
                 data[(i * quadtree.n_cols + j) * 3 + 2] = leaf.b;

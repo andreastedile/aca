@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(aca CXX CUDA)
+project(aca CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 include(FetchContent)
@@ -11,5 +11,5 @@ FetchContent_MakeAvailable(stb)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 
 add_subdirectory(src)
-add_subdirectory(src-cuda)
+# add_subdirectory(src-cuda)
 add_subdirectory(apps)

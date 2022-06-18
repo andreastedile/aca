@@ -7,8 +7,8 @@
 
 #include "quadtree_with_eigen.h"
 
-RgbSoa::RgbSoa(ColorVec r, ColorVec g, ColorVec b)
-    : r(std::move(r)), g(std::move(g)), b(std::move(b)) {}
+RgbSoa::RgbSoa(unsigned n_pixels)
+    : r{n_pixels}, g{n_pixels}, b{n_pixels} {}
 
 Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Quadtree> ne,
                      std::unique_ptr<const Quadtree> se, std::unique_ptr<const Quadtree> sw)
@@ -28,7 +28,7 @@ Quadtree::Quadtree(unsigned int depth, unsigned int i, unsigned int j, unsigned 
 Quadtree::Quadtree(unsigned int n_rows, unsigned int n_cols)
     : Quadtree(0, 0, 0, n_rows, n_cols) {}
 
-void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right) {
+void Quadtree::build(const RgbSoa& image, unsigned left, unsigned right) {
     auto dim = right - left - 1;
 
     double r_mean = image.r.middleCols(left, dim).cast<double>().mean();
@@ -55,10 +55,10 @@ void Quadtree::build_quadtree(const RgbSoa& image, unsigned left, unsigned right
         auto se = std::make_unique<Quadtree>(depth + 1, i + n_rows / 2, j + n_cols / 2, n_rows / 2, n_cols / 2);
         // clang-format on
         auto child_dim = (right - left) / 4;
-        nw->build_quadtree(image, left + 0 * child_dim, left + 1 * child_dim);
-        ne->build_quadtree(image, left + 1 * child_dim, left + 2 * child_dim);
-        sw->build_quadtree(image, left + 2 * child_dim, left + 3 * child_dim);
-        se->build_quadtree(image, left + 3 * child_dim, left + 4 * child_dim);
+        nw->build(image, left + 0 * child_dim, left + 1 * child_dim);
+        ne->build(image, left + 1 * child_dim, left + 2 * child_dim);
+        sw->build(image, left + 2 * child_dim, left + 3 * child_dim);
+        se->build(image, left + 3 * child_dim, left + 4 * child_dim);
 
         data.emplace<Fork>(std::move(nw), std::move(ne), std::move(sw), std::move(se));
     } else {
