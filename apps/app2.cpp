@@ -3,11 +3,15 @@
 #endif
 
 #include <iostream>
+#include <memory>
 
 #include "colorizer.h"
 #include "file_utils.h"
 #include "flatten.h"
 #include "quadtree_with_eigen.h"
+#if defined(LOG_QUADTREE_BUILD_CONSOLE) || defined(LOG_QUADTREE_BUILD_FILE)
+#include "quadtree_logger.h"
+#endif
 
 int main(int, char* argv[]) {
     std::cout << "Reading " << argv[1] << "...\n";
@@ -43,7 +47,7 @@ int main(int, char* argv[]) {
     root.build(soa, 0, n_rows * n_cols);
 #ifdef TIME_QUADTREE_BUILD
     auto build_end = std::chrono::steady_clock::now();
-    std::cout << "Flatten took "
+    std::cout << "Quadtree build took "
               << std::chrono::duration_cast<std::chrono::milliseconds>(build_end - build_start).count()
               << " ms\n";
 #endif
