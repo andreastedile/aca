@@ -17,8 +17,7 @@ int main() {
     ColorVec g(n_pixels);
     ColorVec b(n_pixels);
     // fill red, green, blue color vectors
-    int i = 0;
-    flatten_data(data, r, g, b, 0, 0, w, h, i, w);
+    flatten_data(data, r, g, b, 0, 0, w, h, 0, w);
 
     stbi_image_free(data);
 
