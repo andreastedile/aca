@@ -1,8 +1,8 @@
 add_library(libquadtree
         image.hpp
         image.cpp
-        quadtree.hpp
-        quadtree.cpp
+        old_quadtree.hpp
+        old_quadtree.cpp
         rgb.hpp
         rgb.cpp
         quadtree_with_eigen.cpp

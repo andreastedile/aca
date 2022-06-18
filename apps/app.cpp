@@ -1,12 +1,12 @@
 #include <chrono>
 #include <iostream>
 
-#include "quadtree.hpp"
+#include "old_quadtree.hpp"
 
-int main() {
+int main(int, char* argv[]) {
     auto start = std::chrono::steady_clock::now();
 
-    Quadtree root("image.jpg");
+    OldQuadtree root(argv[1]);
     root.build();
 
     auto end = std::chrono::steady_clock::now();
