@@ -3,6 +3,7 @@ add_executable(app2 app2.cpp)
 
 target_link_libraries(app PRIVATE old_quadtree)
 target_link_libraries(app2 PRIVATE libquadtree)
+target_link_libraries(app2 PRIVATE colorizer)
 
 if (TIME_READ_FILE)
     target_compile_definitions(app2 PRIVATE TIME_READ_FILE)

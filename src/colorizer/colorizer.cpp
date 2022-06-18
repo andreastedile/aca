@@ -1,8 +1,7 @@
-#include <iostream>
 #include <variant>
 
+#include "../overloaded.h"
 #include "colorizer.h"
-#include "overloaded.h"
 
 void colorize(uint8_t* data, const Quadtree& quadtree) {
     auto visit_fork = [&](const Quadtree::Fork& fork) {

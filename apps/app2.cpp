@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory>
 
-#include "colorizer.h"
+#include "colorizer/colorizer.h"
 #include "file_utils.h"
 #include "flatten.h"
 #include "quadtree_with_eigen.h"
