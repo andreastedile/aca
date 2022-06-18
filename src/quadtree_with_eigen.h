@@ -7,9 +7,10 @@ constexpr unsigned DETAIL_THRESHOLD = 13;
 #include <cstdint> // uint8_t
 #include <eigen3/Eigen/Eigen>
 #include <memory> // unique_ptr
+#include <ostream>
 #include <variant>
 
-#include "printer.h"
+#include "quadtree_logger.h"
 
 using color_t = uint8_t;
 
@@ -46,14 +47,17 @@ class Quadtree {
     using Empty = std::monostate;
     std::variant<Fork, Leaf, Empty> data;
 
-    Quadtree(unsigned depth, unsigned i, unsigned j, unsigned n_rows, unsigned n_cols);
+    Quadtree(unsigned depth, unsigned i, unsigned j, unsigned n_rows, unsigned n_cols,
+             std::shared_ptr<QuadtreeLogger> logger);
 
     Quadtree(unsigned n_rows, unsigned n_cols);
 
     void build(const RgbSoa& image, unsigned left, unsigned right);
 
+    void set_logger(std::shared_ptr<QuadtreeLogger> logger);
+
   private:
-    Printer printer;
+    std::shared_ptr<QuadtreeLogger> m_logger;
 };
 
 #endif // ACA_QUADTREE_WITH_EIGEN_H

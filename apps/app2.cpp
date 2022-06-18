@@ -44,6 +44,11 @@ int main(int, char* argv[]) {
     auto build_start = std::chrono::steady_clock::now();
 #endif
     Quadtree root(n_rows, n_cols);
+#ifdef LOG_QUADTREE_BUILD_CONSOLE
+    root.set_logger(std::make_shared<QuadtreeConsoleLogger>());
+#elifdef LOG_QUADTREE_BUILD_FILE
+    root.set_logger(std::make_shared<QuadtreeFileLogger>("quadtree_build.txt"));
+#endif
     root.build(soa, 0, n_rows * n_cols);
 #ifdef TIME_QUADTREE_BUILD
     auto build_end = std::chrono::steady_clock::now();

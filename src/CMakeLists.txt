@@ -10,7 +10,10 @@ add_library(libquadtree
         flatten.h
         file_utils.h
         colorizer.cpp
-        colorizer.h)
+        colorizer.h
+        quadtree_logger.h
+        file_logger.cpp
+        )
 
 if (PARALLEL)
     target_compile_definitions(libquadtree PRIVATE PARALLEL)
