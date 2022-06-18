@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "old_quadtree.hpp"
+#include "old_quadtree/old_quadtree.hpp"
 
 int main(int, char* argv[]) {
     auto start = std::chrono::steady_clock::now();
