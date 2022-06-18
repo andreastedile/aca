@@ -7,7 +7,7 @@
 
 #include "colorizer/colorizer.h"
 #include "file_utils.h"
-#include "flatten.h"
+#include "flattener/flattener.h"
 #include "quadtree_with_eigen.h"
 #if defined(LOG_QUADTREE_BUILD_CONSOLE) || defined(LOG_QUADTREE_BUILD_FILE)
 #include "quadtree_logger.h"
