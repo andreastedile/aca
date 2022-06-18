@@ -1,14 +1,15 @@
+#include <cassert>
 #include <variant>
 
-#include "../overloaded.h"
+#include "../utils/overloaded.h"
 #include "colorizer.h"
 
-void colorize(uint8_t* data, const Quadtree& quadtree) {
+void colorize_impl(uint8_t* pixels, const Quadtree& quadtree) {
     auto visit_fork = [&](const Quadtree::Fork& fork) {
-        colorize(data, *fork.nw);
-        colorize(data, *fork.ne);
-        colorize(data, *fork.se);
-        colorize(data, *fork.sw);
+        colorize_impl(pixels, *fork.nw);
+        colorize_impl(pixels, *fork.ne);
+        colorize_impl(pixels, *fork.se);
+        colorize_impl(pixels, *fork.sw);
     };
     auto visit_leaf = [&](const Quadtree::Leaf& leaf) {
         const auto i_from = quadtree.i;
@@ -19,13 +20,18 @@ void colorize(uint8_t* data, const Quadtree& quadtree) {
 
         for (auto i = i_from; i < i_to; i++) {
             for (auto j = j_from; j < j_to; j++) {
-                data[(i * quadtree.n_cols + j) * 3 + 0] = leaf.r;
-                data[(i * quadtree.n_cols + j) * 3 + 1] = leaf.g;
-                data[(i * quadtree.n_cols + j) * 3 + 2] = leaf.b;
+                pixels[(i * quadtree.n_cols + j) * 3 + 0] = quadtree.color().r;
+                pixels[(i * quadtree.n_cols + j) * 3 + 1] = quadtree.color().g;
+                pixels[(i * quadtree.n_cols + j) * 3 + 2] = quadtree.color().b;
             }
         }
     };
     auto visit_empty = [](const Quadtree::Empty&) {};
 
-    std::visit(overloaded{visit_fork, visit_leaf, visit_empty}, quadtree.data);
+    std::visit(overloaded{visit_fork, visit_leaf, visit_empty}, quadtree.data());
+}
+
+void colorize(uint8_t* pixels, int n_pixels, const Quadtree& quadtree) {
+    assert(n_pixels == quadtree.n_rows * quadtree.n_cols);
+    colorize_impl(pixels, quadtree);
 }
