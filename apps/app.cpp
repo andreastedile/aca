@@ -55,7 +55,7 @@ int main(int, char* argv[]) {
 #ifdef TIME_COLORIZE
     auto colorize_start = std::chrono::steady_clock::now();
 #endif
-    colorize(pixels, n_rows * n_cols, root);
+    colorize(pixels, n_rows, n_cols, root);
 #ifdef TIME_QUADTREE_BUILD
     auto colorize_end = std::chrono::steady_clock::now();
     std::cout << "Colorize took "

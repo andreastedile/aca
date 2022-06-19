@@ -5,6 +5,6 @@
 
 #include <cstdint>
 
-void colorize(uint8_t* pixels, int n_pixels, const Quadtree& quadtree);
+void colorize(uint8_t* pixels, int n_rows, int n_cols, const Quadtree& quadtree);
 
 #endif // ACA_COLORIZER_H
