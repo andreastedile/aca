@@ -1,6 +1,4 @@
 add_library(quadtree
-        logger/quadtree_logger.cpp
-        logger/quadtree_logger.h
         rgb.h
         soa.h
         quadtree.cpp

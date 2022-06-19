@@ -6,7 +6,6 @@
 #include <tuple>
 #include <variant>
 
-#include "logger/quadtree_logger.h"
 #include "rgb.h"
 
 class Quadtree {
@@ -53,7 +52,7 @@ class Quadtree {
     Pixel m_mean;
 
 #ifdef LOG_QUADTREE_BUILD
-    QuadtreeLogger m_logger;
+    int indent;
 #endif
 };
 

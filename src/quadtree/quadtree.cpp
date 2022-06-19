@@ -3,7 +3,10 @@
 #include <cassert>
 #include <cmath>
 #include <utility> // move
-
+#ifdef LOG_QUADTREE_BUILD
+#include <iostream>
+#include <string>
+#endif
 Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Quadtree> ne,
                      std::unique_ptr<const Quadtree> se, std::unique_ptr<const Quadtree> sw)
     : nw(std::move(nw)), ne(std::move(ne)), se(std::move(se)), sw(std::move(sw)) {
@@ -20,7 +23,7 @@ Quadtree::Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols)
       m_mean()
 #ifdef LOG_QUADTREE_BUILD
       ,
-      m_logger(depth * 4)
+      indent(depth * 4)
 #endif
 {
     assert(height >= 0);
@@ -31,9 +34,9 @@ Quadtree::Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols)
     assert(n_cols >= 1);
 
 #ifdef LOG_QUADTREE_BUILD
-    m_logger.print_depth(depth);
-    m_logger.print_i_j(i, j);
-    m_logger.print_n_rows_n_cols(n_rows, n_cols);
+    std::cout << std::string(indent, ' ') << "depth: " << depth << '\n';
+    std::cout << std::string(indent, ' ') << "i: " << i << ", j: " << j << '\n';
+    std::cout << std::string(indent, ' ') << "rows: " << n_rows << ", cols: " << n_cols << '\n';
 #endif
 }
 
@@ -42,12 +45,12 @@ void Quadtree::build(double detail_threshold) {
 
     m_mean = this->mean();
 #ifdef LOG_QUADTREE_BUILD
-    m_logger.print_mean(m_mean);
+    std::cout << std::string(indent, ' ') << "mean: " << +m_mean.r << ' ' << +m_mean.g << ' ' << +m_mean.b << '\n';
 #endif
 
     const auto sq_mean = this->sq_mean();
 #ifdef LOG_QUADTREE_BUILD
-    m_logger.print_sq_mean(sq_mean);
+    std::cout << std::string(indent, ' ') << "sq_mean: " << sq_mean.r << ' ' << sq_mean.g << ' ' << sq_mean.b << '\n';
 #endif
 
     const auto stdev = RGB<double>{
@@ -55,11 +58,13 @@ void Quadtree::build(double detail_threshold) {
         std::sqrt(sq_mean.g - std::pow(m_mean.g, 2)),
         std::sqrt(sq_mean.b - std::pow(m_mean.b, 2))};
 #ifdef LOG_QUADTREE_BUILD
-    m_logger.print_stdev(stdev);
+    std::cout << std::string(indent, ' ') << "stdev: " << stdev.r << ' ' << stdev.g << ' ' << stdev.b << '\n';
 #endif
 
     if (should_split(detail_threshold, stdev)) {
-        m_logger.print_split();
+#ifdef LOG_QUADTREE_BUILD
+        std::cout << std::string(indent, ' ') << "split\n";
+#endif
 
         auto nw = this->nw();
         auto ne = this->ne();
@@ -73,7 +78,9 @@ void Quadtree::build(double detail_threshold) {
 
         m_data.emplace<Fork>(std::move(nw), std::move(ne), std::move(sw), std::move(se));
     } else {
-        m_logger.print_leaf();
+#ifdef LOG_QUADTREE_BUILD
+        std::cout << std::string(indent, ' ') << "leaf\n";
+#endif
         m_data.emplace<Leaf>();
     }
 }
