@@ -9,3 +9,10 @@ add_library(quadtree
 if (LOG_QUADTREE_BUILD)
     target_compile_definitions(quadtree PRIVATE LOG_QUADTREE_BUILD)
 endif ()
+
+if (PARALLEL)
+    # Fixme: why PUBLIC and not PRIVATE?
+    target_compile_definitions(quadtree PUBLIC PARALLEL)
+    find_package(Threads REQUIRED)
+    target_link_libraries(quadtree PRIVATE Threads::Threads)
+endif ()
