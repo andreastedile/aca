@@ -23,10 +23,12 @@ class Quadtree final {
     };
     struct Leaf final {};
 
-    Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, Pixel mean);
+    Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<double> mean, RGB<double> std);
 
     [[nodiscard]] const std::variant<Fork, Leaf>& data() const;
     [[nodiscard]] virtual Pixel color() const final;
+    [[nodiscard]] virtual RGB<double> mean() const final;
+    [[nodiscard]] virtual RGB<double> std() const final;
 
     const int height;
     const int depth;
@@ -37,7 +39,9 @@ class Quadtree final {
 
   private:
     std::variant<Fork, Leaf> m_data;
-    Pixel m_mean;
+    Pixel m_color;
+    RGB<double> m_std;
+    RGB<double> m_mean;
 
 #ifdef LOG_QUADTREE_BUILD
     int indent;

@@ -4,7 +4,8 @@ add_library(quadtree
         quadtree.cpp
         quadtree.h
         quadrant.h
-        top_down.h)
+        top_down.h
+        bottom_up.h)
 
 if (LOG_QUADTREE_BUILD)
     target_compile_definitions(quadtree PRIVATE LOG_QUADTREE_BUILD)

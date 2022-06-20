@@ -13,7 +13,7 @@ class EigenQuadrant final : public Quadrant {
                   int n_rows, int n_cols,
                   const EigenPixelSoa& soa, int left, int length);
 
-    [[nodiscard]] Pixel mean() const override;
+    [[nodiscard]] RGB<double> mean() const override;
     [[nodiscard]] RGB<double> sq_mean() const override;
     [[nodiscard]] std::unique_ptr<Quadrant> nw() const override;
     [[nodiscard]] std::unique_ptr<Quadrant> ne() const override;

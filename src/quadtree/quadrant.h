@@ -17,7 +17,7 @@ class Quadrant {
         assert(n_rows >= 1);
         assert(n_cols >= 1);
     }
-    [[nodiscard]] virtual Pixel mean() const = 0;
+    [[nodiscard]] virtual RGB<double> mean() const = 0;
     [[nodiscard]] virtual RGB<double> sq_mean() const = 0;
 
     [[nodiscard]] virtual std::unique_ptr<Quadrant> nw() const = 0;

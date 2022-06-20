@@ -5,10 +5,10 @@ EigenQuadrant::EigenQuadrant(int i, int j, int n_rows, int n_cols, const EigenPi
 EigenQuadrant::EigenQuadrant(int i, int j, int n_rows, int n_cols, const EigenPixelSoa& soa, int left, int length)
     : Quadrant(i, j, n_rows, n_cols), soa(soa), left(left), length(length) {}
 
-Pixel EigenQuadrant::mean() const {
-    return {static_cast<color_t>(soa.r.middleCols(left, length).cast<double>().mean()),
-            static_cast<color_t>(soa.g.middleCols(left, length).cast<double>().mean()),
-            static_cast<color_t>(soa.b.middleCols(left, length).cast<double>().mean())};
+RGB<double> EigenQuadrant::mean() const {
+    return {soa.r.middleCols(left, length).cast<double>().mean(),
+            soa.g.middleCols(left, length).cast<double>().mean(),
+            soa.b.middleCols(left, length).cast<double>().mean()};
 }
 
 RGB<double> EigenQuadrant::sq_mean() const {

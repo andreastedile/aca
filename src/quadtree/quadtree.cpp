@@ -12,12 +12,14 @@ Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Q
     : nw(std::move(nw)), ne(std::move(ne)), se(std::move(se)), sw(std::move(sw)) {
 }
 
-Quadtree::Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, Pixel mean)
+Quadtree::Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<double> mean, RGB<double> std)
     : height(height), depth(depth),
       i(i), j(j),
       n_rows(n_rows), n_cols(n_cols),
       m_data(std::move(data)),
-      m_mean(mean)
+      m_std(std),
+      m_mean(mean),
+      m_color{static_cast<color_t>(mean.r), static_cast<color_t>(mean.g), static_cast<color_t>(mean.b)}
 #ifdef LOG_QUADTREE_BUILD
       ,
       indent(depth * 4)
@@ -42,5 +44,13 @@ const std::variant<Quadtree::Fork, Quadtree::Leaf>& Quadtree::data() const {
 }
 
 Pixel Quadtree::color() const {
+    return m_color;
+}
+
+RGB<double> Quadtree::mean() const {
     return m_mean;
+}
+
+RGB<double> Quadtree::std() const {
+    return m_std;
 }

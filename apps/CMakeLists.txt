@@ -1,4 +1,6 @@
 add_executable(app app.cpp)
+add_executable(app-bu app-bu.cpp)
+
 
 target_include_directories(app PRIVATE "${stb_SOURCE_DIR}")
 
@@ -7,22 +9,35 @@ target_link_libraries(app PRIVATE quadtree)
 target_link_libraries(app PRIVATE eigen_quadrant)
 target_link_libraries(app PRIVATE colorizer)
 
+target_include_directories(app-bu PRIVATE "${stb_SOURCE_DIR}")
+
+target_link_libraries(app-bu PRIVATE eigen_soa)
+target_link_libraries(app-bu PRIVATE quadtree)
+target_link_libraries(app-bu PRIVATE eigen_quadrant)
+target_link_libraries(app-bu PRIVATE colorizer)
+
 
 if (TIME_READ_FILE)
     target_compile_definitions(app PRIVATE TIME_READ_FILE)
+    target_compile_definitions(app-bu PRIVATE TIME_READ_FILE)
 endif ()
 if (TIME_SOA)
     target_compile_definitions(app PRIVATE TIME_SOA)
+    target_compile_definitions(app-bu PRIVATE TIME_SOA)
 endif ()
 if (LOG_QUADTREE_BUILD)
     target_compile_definitions(app PRIVATE LOG_QUADTREE_BUILD)
+    target_compile_definitions(app-bu PRIVATE LOG_QUADTREE_BUILD)
 endif ()
 if (TIME_QUADTREE_BUILD)
     target_compile_definitions(app PRIVATE TIME_QUADTREE_BUILD)
+    target_compile_definitions(app-bu PRIVATE TIME_QUADTREE_BUILD)
 endif ()
 if (TIME_COLORIZE)
     target_compile_definitions(app PRIVATE TIME_COLORIZE)
+    target_compile_definitions(app-bu PRIVATE TIME_COLORIZE)
 endif ()
 if (TIME_WRITE_FILE)
     target_compile_definitions(app PRIVATE TIME_WRITE_FILE)
+    target_compile_definitions(app-bu PRIVATE TIME_WRITE_FILE)
 endif ()

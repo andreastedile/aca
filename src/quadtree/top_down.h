@@ -14,11 +14,11 @@
 #include <cmath>
 #include <string>
 
-bool should_split(double detail_threshold, int height, const RGB<double>& stdev) {
+bool should_merge(double detail_threshold, int height, const RGB<double>& std) {
     return height > 0 &&
-           stdev.r > detail_threshold &&
-           stdev.g > detail_threshold &&
-           stdev.b > detail_threshold;
+           std.r > detail_threshold &&
+           std.g > detail_threshold &&
+           std.b > detail_threshold;
 }
 
 std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold,
@@ -36,15 +36,15 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
     std::cout << std::string(depth * 4, ' ') << "sq_mean: " << sq_mean.r << ' ' << sq_mean.g << ' ' << sq_mean.b << '\n';
 #endif
 
-    const auto stdev = RGB<double>{
+    const auto std = RGB<double>{
         std::sqrt(sq_mean.r - std::pow(mean.r, 2)),
         std::sqrt(sq_mean.g - std::pow(mean.g, 2)),
         std::sqrt(sq_mean.b - std::pow(mean.b, 2))};
 #ifdef LOG_QUADTREE_BUILD
-    std::cout << std::string(depth * 4, ' ') << "stdev: " << stdev.r << ' ' << stdev.g << ' ' << stdev.b << '\n';
+    std::cout << std::string(depth * 4, ' ') << "std: " << std.r << ' ' << std.g << ' ' << std.b << '\n';
 #endif
 
-    if (should_split(detail_threshold, height, stdev)) {
+    if (should_merge(detail_threshold, height, std)) {
 #ifdef LOG_QUADTREE_BUILD
         std::cout << std::string(depth * 4, ' ') << "split\n";
 #endif
@@ -77,7 +77,7 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
                                           quadrant->i, quadrant->j,
                                           quadrant->n_rows, quadrant->n_cols,
                                           Quadtree::Fork{std::move(nw), std::move(ne), std::move(sw), std::move(se)},
-                                          mean);
+                                          mean, std);
     } else {
 #ifdef LOG_QUADTREE_BUILD
         std::cout << std::string(depth * 4, ' ') << "leaf\n";
@@ -86,7 +86,7 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
                                           quadrant->i, quadrant->j,
                                           quadrant->n_rows, quadrant->n_cols,
                                           Quadtree::Leaf{},
-                                          mean);
+                                          mean, std);
     }
 }
 
