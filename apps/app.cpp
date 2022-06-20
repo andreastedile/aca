@@ -1,7 +1,8 @@
 #include "colorizer/colorizer.h"
-#include "eigen_quadtree/eigen_quadtree.h"
+#include "eigen_quadrant/eigen_quadrant.h"
 #include "eigen_soa/eigen_soa.h"
 #include "file_utils.h"
+#include "quadtree/top_down.h"
 
 #if defined(TIME_READ_FILE) || defined(TIME_FLATTEN) || defined(TIME_QUADTREE_BUILD) || defined(TIME_COLORIZE) || defined(TIME_WRITE_FILE)
 #include <chrono>
@@ -42,8 +43,8 @@ int main(int, char* argv[]) {
 #ifdef TIME_QUADTREE_BUILD
     auto build_start = std::chrono::steady_clock::now();
 #endif
-    auto root = EigenQuadtree(soa, n_rows, n_cols, MAX_DEPTH);
-    root.build(DETAIL_THRESHOLD);
+    auto quadrant = EigenQuadrant(0, 0, n_rows, n_cols, soa);
+    auto root = top_down(quadrant, DETAIL_THRESHOLD, MAX_DEPTH);
 #ifdef TIME_QUADTREE_BUILD
     auto build_end = std::chrono::steady_clock::now();
     std::cout << "Quadtree build took "
@@ -55,7 +56,7 @@ int main(int, char* argv[]) {
 #ifdef TIME_COLORIZE
     auto colorize_start = std::chrono::steady_clock::now();
 #endif
-    colorize(pixels, n_rows, n_cols, root);
+    colorize(pixels, n_rows, n_cols, *root);
 #ifdef TIME_QUADTREE_BUILD
     auto colorize_end = std::chrono::steady_clock::now();
     std::cout << "Colorize took "

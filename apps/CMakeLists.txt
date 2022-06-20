@@ -4,7 +4,7 @@ target_include_directories(app PRIVATE "${stb_SOURCE_DIR}")
 
 target_link_libraries(app PRIVATE eigen_soa)
 target_link_libraries(app PRIVATE quadtree)
-target_link_libraries(app PRIVATE eigen_quadtree)
+target_link_libraries(app PRIVATE eigen_quadrant)
 target_link_libraries(app PRIVATE colorizer)
 
 

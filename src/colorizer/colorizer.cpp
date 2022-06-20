@@ -26,9 +26,8 @@ void colorize_impl(uint8_t* pixels, int N_COLS, const Quadtree& quadtree) {
             }
         }
     };
-    auto visit_empty = [](const Quadtree::Empty&) {};
 
-    std::visit(overloaded{visit_fork, visit_leaf, visit_empty}, quadtree.data());
+    std::visit(overloaded{visit_fork, visit_leaf}, quadtree.data());
 }
 
 void colorize(uint8_t* pixels, int n_rows, int n_cols, const Quadtree& quadtree) {

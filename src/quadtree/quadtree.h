@@ -1,6 +1,7 @@
 #ifndef ACA_QUADTREE_H
 #define ACA_QUADTREE_H
 
+#include <functional>
 #include <memory> // unique_ptr
 #include <string>
 #include <tuple>
@@ -8,7 +9,7 @@
 
 #include "rgb.h"
 
-class Quadtree {
+class Quadtree final {
   public:
     struct Fork final {
         std::unique_ptr<const Quadtree> nw;
@@ -21,13 +22,10 @@ class Quadtree {
              std::unique_ptr<const Quadtree> sw);
     };
     struct Leaf final {};
-    using Empty = std::monostate;
 
-    Quadtree(int max_depth, int n_rows, int n_cols);
-    Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols);
+    Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, Pixel mean);
 
-    virtual void build(double detail_threshold) final;
-    [[nodiscard]] const std::variant<Fork, Leaf, Empty>& data() const;
+    [[nodiscard]] const std::variant<Fork, Leaf>& data() const;
     [[nodiscard]] virtual Pixel color() const final;
 
     const int height;
@@ -37,18 +35,8 @@ class Quadtree {
     const int n_rows;
     const int n_cols;
 
-  protected:
-    [[nodiscard]] virtual Pixel mean() const = 0;
-    [[nodiscard]] virtual RGB<double> sq_mean() const = 0;
-    [[nodiscard]] virtual bool should_split(double detail_threshold, const RGB<double>& stdev) const final;
-
-    [[nodiscard]] virtual std::unique_ptr<Quadtree> nw() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadtree> ne() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadtree> se() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadtree> sw() const = 0;
-
   private:
-    std::variant<Fork, Leaf, Empty> m_data;
+    std::variant<Fork, Leaf> m_data;
     Pixel m_mean;
 
 #ifdef LOG_QUADTREE_BUILD
