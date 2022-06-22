@@ -16,9 +16,9 @@ target_link_libraries(app-bu PRIVATE eigen_quadrant)
 target_link_libraries(app-bu PRIVATE colorizer)
 
 target_include_directories(app-cuda PRIVATE "${stb_SOURCE_DIR}")
-target_link_libraries(app-cuda PRIVATE eigen_soa)
+target_link_libraries(app-cuda PRIVATE cuda_soa)
 target_link_libraries(app-cuda PRIVATE quadtree)
-target_link_libraries(app-cuda PRIVATE eigen_quadrant)
+target_link_libraries(app-cuda PRIVATE cuda_quadrant)
 target_link_libraries(app-cuda PRIVATE colorizer)
 
 
