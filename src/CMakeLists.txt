@@ -1,10 +1,14 @@
 # Abstract quadtree
 add_subdirectory(quadtree)
+add_subdirectory(colorizer) # uses quadtree
 
 # Eigen quadtree
 add_subdirectory(eigen_soa) # uses quadtree
 add_subdirectory(eigen_quadrant) # uses quadtree, eigen_soa
-add_subdirectory(colorizer) # uses quadtree
+
+# Cuda quadtree
+add_subdirectory(cuda_soa) # uses quadtree
+add_subdirectory(cuda_quadrant) # uses quadtree, cuda_soa
 
 target_include_directories(quadtree INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_include_directories(eigen_soa INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
