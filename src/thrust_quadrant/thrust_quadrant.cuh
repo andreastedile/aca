@@ -1,17 +1,17 @@
 #ifndef ACA_CUDA_QUADRANT_H
 #define ACA_CUDA_QUADRANT_H
 
-#include "../cuda_soa/cuda_soa.cuh" // CudaDevicePixelSoa
+#include "../thrust_soa/thrust_soa.cuh" // ThrustDevicePixelSoa
 #include "../quadtree/quadrant.h"   // Quadrant, RGB, Pixel
 
 #include <memory> // unique_ptr
 
-class CudaQuadrant final : public Quadrant {
+class ThrustQuadrant final : public Quadrant {
   public:
-    CudaQuadrant(int i, int j, int n_rows, int n_cols, const CudaDevicePixelSoa& soa);
-    CudaQuadrant(int i, int j,
+    ThrustQuadrant(int i, int j, int n_rows, int n_cols, const ThrustDevicePixelSoa& soa);
+    ThrustQuadrant(int i, int j,
                   int n_rows, int n_cols,
-                  const CudaDevicePixelSoa& soa, int left, int length);
+                  const ThrustDevicePixelSoa& soa, int left, int length);
 
     [[nodiscard]] RGB<double> mean() const override;
     [[nodiscard]] RGB<double> sq_mean() const override;
@@ -21,7 +21,7 @@ class CudaQuadrant final : public Quadrant {
     [[nodiscard]] std::unique_ptr<Quadrant> sw() const override;
 
   private:
-    const CudaDevicePixelSoa& soa;
+    const ThrustDevicePixelSoa& soa;
     const int left;
     const int length;
 };

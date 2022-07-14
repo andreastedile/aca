@@ -1,6 +1,6 @@
 add_library(cuda_soa
-        cuda_soa.cu
-        cuda_soa.cuh)
+        thrust_soa.cu
+        thrust_soa.cuh)
 
 target_link_libraries(cuda_soa INTERFACE quadtree)
 

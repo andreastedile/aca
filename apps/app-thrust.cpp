@@ -1,8 +1,8 @@
 #include "colorizer/colorizer.h"
-#include "cuda_quadrant/cuda_quadrant.cuh"
-#include "cuda_soa/cuda_soa.cuh"
 #include "file_utils.h"
 #include "quadtree/top_down.h"
+#include "thrust_quadrant/thrust_quadrant.cuh"
+#include "thrust_soa/thrust_soa.cuh"
 
 #if defined(TIME_READ_FILE) || defined(TIME_FLATTEN) || defined(TIME_QUADTREE_BUILD) || defined(TIME_COLORIZE) || defined(TIME_WRITE_FILE)
 #include <chrono>
@@ -31,7 +31,7 @@ int main(int, char* argv[]) {
 #ifdef TIME_SOA
     auto soa_start = std::chrono::steady_clock::now();
 #endif
-    const auto soa = to_cuda_pixel_soa(pixels, n_rows * n_cols);
+    const auto soa = to_thrust_pixel_soa(pixels, n_rows * n_cols);
 #ifdef TIME_SOA
     auto soa_end = std::chrono::steady_clock::now();
     std::cout << "Soa took "
@@ -43,7 +43,7 @@ int main(int, char* argv[]) {
 #ifdef TIME_QUADTREE_BUILD
     auto build_start = std::chrono::steady_clock::now();
 #endif
-    auto quadrant = std::make_unique<CudaQuadrant>(0, 0, n_rows, n_cols, soa);
+    auto quadrant = std::make_unique<ThrustQuadrant>(0, 0, n_rows, n_cols, soa);
     auto root = top_down(std::move(quadrant), DETAIL_THRESHOLD, MAX_DEPTH);
 #ifdef TIME_QUADTREE_BUILD
     auto build_end = std::chrono::steady_clock::now();

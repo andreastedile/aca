@@ -1,7 +1,7 @@
-#include "cuda_soa.cuh"
+#include "thrust_soa.cuh"
 
 void flatten_data_impl(const uint8_t* pixels,
-                       CudaHostPixelSoa& soa,
+                       ThrustHostPixelSoa& soa,
                        int i, int j,
                        int n_rows, int n_cols,
                        int idx,
@@ -23,9 +23,9 @@ void flatten_data_impl(const uint8_t* pixels,
     }
 }
 
-CudaDevicePixelSoa to_cuda_pixel_soa(const uint8_t* pixels, int n_pixels) {
-    auto soa = CudaHostPixelSoa{CudaHostPixelArray(n_pixels), CudaHostPixelArray(n_pixels), CudaHostPixelArray(n_pixels)};
+ThrustDevicePixelSoa to_thrust_pixel_soa(const uint8_t* pixels, int n_pixels) {
+    auto soa = ThrustHostPixelSoa{ThrustHostPixelArray(n_pixels), ThrustHostPixelArray(n_pixels), ThrustHostPixelArray(n_pixels)};
     // Fixme: fix the order of the parameters in the function call
     flatten_data_impl(pixels, soa, 0, 0, std::sqrt(n_pixels), std::sqrt(n_pixels), 0, std::sqrt(n_pixels));
-    return CudaDevicePixelSoa{soa.r, soa.g, soa.b};
+    return ThrustDevicePixelSoa{soa.r, soa.g, soa.b};
 }

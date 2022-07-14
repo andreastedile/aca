@@ -1,6 +1,6 @@
 add_library(cuda_quadrant
-        cuda_quadrant.cu
-        cuda_quadrant.cuh)
+        thrust_quadrant.cu
+        thrust_quadrant.cuh)
 
 target_link_libraries(cuda_quadrant INTERFACE quadtree)
 target_link_libraries(cuda_quadrant INTERFACE cuda_soa)

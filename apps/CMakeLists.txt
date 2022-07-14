@@ -1,6 +1,6 @@
 add_executable(app app.cpp)
 add_executable(app-bu app-bu.cpp)
-add_executable(app-cuda app-cuda.cpp)
+add_executable(app-cuda app-thrust.cpp)
 
 
 target_include_directories(app PRIVATE "${stb_SOURCE_DIR}")
