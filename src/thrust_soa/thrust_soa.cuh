@@ -14,6 +14,6 @@ using ThrustDevicePixelArray = thrust::device_vector<uint8_t>;
 using ThrustHostPixelSoa = PixelSoa<ThrustDevicePixelArray>;
 using ThrustDevicePixelSoa = PixelSoa<ThrustDevicePixelArray>;
 
-ThrustDevicePixelSoa to_thrust_pixel_soa(const uint8_t* pixels, int n_pixels);
+ThrustDevicePixelSoa to_cuda_pixel_soa(const uint8_t* pixels, int n_pixels);
 
 #endif // ACA_CUDA_SOA_H

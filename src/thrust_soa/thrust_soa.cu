@@ -23,7 +23,7 @@ void flatten_data_impl(const uint8_t* pixels,
     }
 }
 
-ThrustDevicePixelSoa to_thrust_pixel_soa(const uint8_t* pixels, int n_pixels) {
+ThrustDevicePixelSoa to_cuda_pixel_soa(const uint8_t* pixels, int n_pixels) {
     auto soa = ThrustHostPixelSoa{ThrustHostPixelArray(n_pixels), ThrustHostPixelArray(n_pixels), ThrustHostPixelArray(n_pixels)};
     // Fixme: fix the order of the parameters in the function call
     flatten_data_impl(pixels, soa, 0, 0, std::sqrt(n_pixels), std::sqrt(n_pixels), 0, std::sqrt(n_pixels));

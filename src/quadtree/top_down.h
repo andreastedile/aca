@@ -21,17 +21,18 @@ bool should_merge(double detail_threshold, int height, const RGB<double>& std) {
            std.b > detail_threshold;
 }
 
-std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold,
+template <typename T>
+std::unique_ptr<Quadtree> top_down_impl(const Quadrant<T> &quadrant, double detail_threshold,
                                         int height, int depth) {
     assert(detail_threshold >= 0);
     assert(height >= 0);
 
-    const auto mean = quadrant->mean();
+    const auto mean = quadrant.mean();
 #ifdef LOG_QUADTREE_BUILD
     std::cout << std::string(depth * 4, ' ') << "mean: " << +mean.r << ' ' << +mean.g << ' ' << +mean.b << '\n';
 #endif
 
-    const auto sq_mean = quadrant->sq_mean();
+    const auto sq_mean = quadrant.sq_mean();
 #ifdef LOG_QUADTREE_BUILD
     std::cout << std::string(depth * 4, ' ') << "sq_mean: " << sq_mean.r << ' ' << sq_mean.g << ' ' << sq_mean.b << '\n';
 #endif
@@ -53,29 +54,29 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
 #ifdef PARALLEL
         if (depth <= 1) { // Don't overload the system.
             // Spawn 3 threads, and assign 1 subquadrant to each of them.
-            auto nwf = std::async(std::launch::async, top_down_impl, quadrant->nw(), detail_threshold, height - 1, depth + 1);
-            auto nef = std::async(std::launch::async, top_down_impl, quadrant->ne(), detail_threshold, height - 1, depth + 1);
-            auto sef = std::async(std::launch::async, top_down_impl, quadrant->se(), detail_threshold, height - 1, depth + 1);
+            auto nwf = std::async(std::launch::async, top_down_impl, quadrant.nw(), detail_threshold, height - 1, depth + 1);
+            auto nef = std::async(std::launch::async, top_down_impl, quadrant.ne(), detail_threshold, height - 1, depth + 1);
+            auto sef = std::async(std::launch::async, top_down_impl, quadrant.se(), detail_threshold, height - 1, depth + 1);
             nw = nwf.get();
             ne = nef.get();
             se = sef.get();
             // Assign the remaining subquadrant to the current thread.
-            sw = top_down_impl(quadrant->sw(), detail_threshold, height - 1, depth + 1);
+            sw = top_down_impl(quadrant.sw(), detail_threshold, height - 1, depth + 1);
         } else {
-            nw = top_down_impl(quadrant->nw(), detail_threshold, height - 1, depth + 1);
-            ne = top_down_impl(quadrant->ne(), detail_threshold, height - 1, depth + 1);
-            se = top_down_impl(quadrant->se(), detail_threshold, height - 1, depth + 1);
-            sw = top_down_impl(quadrant->sw(), detail_threshold, height - 1, depth + 1);
+            nw = top_down_impl(quadrant.nw(), detail_threshold, height - 1, depth + 1);
+            ne = top_down_impl(quadrant.ne(), detail_threshold, height - 1, depth + 1);
+            se = top_down_impl(quadrant.se(), detail_threshold, height - 1, depth + 1);
+            sw = top_down_impl(quadrant.sw(), detail_threshold, height - 1, depth + 1);
         }
 #else
-        nw = top_down_impl(quadrant->nw(), detail_threshold, height - 1, depth + 1);
-        ne = top_down_impl(quadrant->ne(), detail_threshold, height - 1, depth + 1);
-        se = top_down_impl(quadrant->se(), detail_threshold, height - 1, depth + 1);
-        sw = top_down_impl(quadrant->sw(), detail_threshold, height - 1, depth + 1);
+        nw = top_down_impl(quadrant.nw(), detail_threshold, height - 1, depth + 1);
+        ne = top_down_impl(quadrant.ne(), detail_threshold, height - 1, depth + 1);
+        se = top_down_impl(quadrant.se(), detail_threshold, height - 1, depth + 1);
+        sw = top_down_impl(quadrant.sw(), detail_threshold, height - 1, depth + 1);
 #endif
         return std::make_unique<Quadtree>(height, depth,
-                                          quadrant->i, quadrant->j,
-                                          quadrant->n_rows, quadrant->n_cols,
+                                          quadrant.i, quadrant.j,
+                                          quadrant.n_rows, quadrant.n_cols,
                                           Quadtree::Fork{std::move(nw), std::move(ne), std::move(sw), std::move(se)},
                                           mean, std);
     } else {
@@ -83,14 +84,15 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
         std::cout << std::string(depth * 4, ' ') << "leaf\n";
 #endif
         return std::make_unique<Quadtree>(height, depth,
-                                          quadrant->i, quadrant->j,
-                                          quadrant->n_rows, quadrant->n_cols,
+                                          quadrant.i, quadrant.j,
+                                          quadrant.n_rows, quadrant.n_cols,
                                           Quadtree::Leaf{},
                                           mean, std);
     }
 }
 
-std::unique_ptr<Quadtree> top_down(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int max_depth) {
+template <typename T>
+std::unique_ptr<Quadtree> top_down(const Quadrant<T> &quadrant, double detail_threshold, int max_depth) {
     return top_down_impl(std::move(quadrant), detail_threshold, max_depth, 0);
 }
 

@@ -31,7 +31,7 @@ int main(int, char* argv[]) {
 #ifdef TIME_SOA
     auto soa_start = std::chrono::steady_clock::now();
 #endif
-    const auto soa = to_thrust_pixel_soa(pixels, n_rows * n_cols);
+    const auto soa = to_cuda_pixel_soa(pixels, n_rows * n_cols);
 #ifdef TIME_SOA
     auto soa_end = std::chrono::steady_clock::now();
     std::cout << "Soa took "

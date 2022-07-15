@@ -43,8 +43,8 @@ int main(int, char* argv[]) {
 #ifdef TIME_QUADTREE_BUILD
     auto build_start = std::chrono::steady_clock::now();
 #endif
-    auto quadrant = std::make_unique<EigenQuadrant>(0, 0, n_rows, n_cols, soa);
-    auto root = bottom_up(std::move(quadrant), DETAIL_THRESHOLD, MAX_DEPTH);
+    auto quadrant = EigenQuadrant(0, 0, n_rows, n_cols, soa);
+    auto root = bottom_up(quadrant, DETAIL_THRESHOLD, MAX_DEPTH);
 #ifdef TIME_QUADTREE_BUILD
     auto build_end = std::chrono::steady_clock::now();
     std::cout << "Quadtree build took "

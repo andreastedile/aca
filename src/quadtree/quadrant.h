@@ -6,6 +6,7 @@
 #include <cassert>
 #include <memory>
 
+template <class T>
 class Quadrant {
   public:
     Quadrant(int i,
@@ -17,13 +18,13 @@ class Quadrant {
         assert(n_rows >= 1);
         assert(n_cols >= 1);
     }
-    [[nodiscard]] virtual RGB<double> mean() const = 0;
-    [[nodiscard]] virtual RGB<double> sq_mean() const = 0;
+    [[nodiscard]] RGB<double> mean() const { return static_cast<const T*>(this)->mean_impl(); };
+    [[nodiscard]] RGB<double> sq_mean() const { return static_cast<const T*>(this)-> sq_mean_impl(); };
 
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> nw() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> ne() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> se() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> sw() const = 0;
+    [[nodiscard]] T nw() const { return static_cast<const T*>(this)->nw_impl(); }
+    [[nodiscard]] T ne() const { return static_cast<const T*>(this)->ne_impl(); }
+    [[nodiscard]] T se() const { return static_cast<const T*>(this)->se_impl(); }
+    [[nodiscard]] T sw() const { return static_cast<const T*>(this)->sw_impl(); }
 
     int i;
     int j;
