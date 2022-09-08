@@ -11,6 +11,8 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
+find_package(argparse REQUIRED)
+find_package(spdlog REQUIRED)
 find_package(Eigen3 3.4 REQUIRED)
 find_package(stb REQUIRED)
 #find_package(Thrust REQUIRED)
