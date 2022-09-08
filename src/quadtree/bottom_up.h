@@ -82,7 +82,7 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, dou
     assert(detail_threshold >= 0);
     assert(height >= 0);
 
-    if (height == 0) {
+    if (height == 0 || quadrant->n_cols == 1) {
         const auto mean = quadrant->mean();
 #ifdef LOG_QUADTREE_BUILD
         std::cout << std::string(depth * 4, ' ') << "mean: " << +mean.r << ' ' << +mean.g << ' ' << +mean.b << '\n';
