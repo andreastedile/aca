@@ -14,7 +14,7 @@
 #include <cmath>
 #include <string>
 
-bool should_merge(double detail_threshold, int height, const RGB<double>& std) {
+bool should_split(double detail_threshold, int height, const RGB<double>& std) {
     return height > 0 &&
            std.r > detail_threshold &&
            std.g > detail_threshold &&
@@ -44,7 +44,7 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
     std::cout << std::string(depth * 4, ' ') << "std: " << std.r << ' ' << std.g << ' ' << std.b << '\n';
 #endif
 
-    if (should_merge(detail_threshold, height, std)) {
+    if (should_split(detail_threshold, height, std)) {
 #ifdef LOG_QUADTREE_BUILD
         std::cout << std::string(depth * 4, ' ') << "split\n";
 #endif
