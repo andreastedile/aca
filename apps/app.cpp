@@ -76,7 +76,7 @@ int main(int, char* argv[]) {
               << " ms\n";
 #endif
 
-    stbi_image_free(pixels);
+    delete[] pixels;
 
     return 0;
 }
