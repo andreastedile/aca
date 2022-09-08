@@ -1,8 +1,8 @@
-#include "colorizer/colorizer.h"
-#include "eigen_quadrant/eigen_quadrant.h"
-#include "eigen_soa/eigen_soa.h"
-#include "quadtree/bottom_up.h"
-#include "quadtree/top_down.h"
+#include "bottom_up.h"
+#include "colorizer.h"
+#include "quadrant.h"
+#include "rgbsoa.h"
+#include "top_down.h"
 
 #include <argparse/argparse.hpp>
 #include <memory>
@@ -12,6 +12,8 @@
 #include <stb_image_write.h>
 
 int main(int argc, char* argv[]) {
+    spdlog::set_level(spdlog::level::debug);
+
     argparse::ArgumentParser app("app");
 
     app.add_argument("input")
@@ -34,40 +36,43 @@ int main(int argc, char* argv[]) {
 
     auto input = app.get("input");
     auto do_top_down = app.get<bool>("--top-down");
-    auto max_depth = app.get<int>("--max-depth");
     auto detail_threshold = app.get<double>("--detail-threshold");
 
     spdlog::stopwatch sw;
 
-    spdlog::info("Read {}", argv[1]);
+    spdlog::info("Read {}", input);
+    sw.reset();
     int n_rows, n_cols, n;
-    uint8_t* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
+    unsigned char* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
+    spdlog::info("Read took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     spdlog::info("Compute SoA");
     sw.reset();
-    const auto soa = to_eigen_pixel_soa(pixels, n_rows * n_cols);
+    const auto soa = flatten_to_rgb_soa(pixels, n_rows * n_cols);
     spdlog::info("Compute SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
-    auto quadrant = std::make_unique<EigenQuadrant>(0, 0, n_rows, n_cols, soa);
-    std::unique_ptr<Quadtree> root;
+    auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);
+    std::unique_ptr<Quadtree> quadtree_root;
     if (do_top_down) {
         spdlog::info("Build quadtree top down");
         sw.reset();
-        root = top_down(std::move(quadrant), detail_threshold, max_depth);
+        quadtree_root = top_down(std::move(quadrant), detail_threshold);
     } else {
         spdlog::info("Build quadtree bottom up");
         sw.reset();
-        root = bottom_up(std::move(quadrant), detail_threshold, max_depth);
+        quadtree_root = bottom_up(std::move(quadrant), detail_threshold);
     }
     spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     spdlog::info("Colorize");
     sw.reset();
-    colorize(pixels, n_rows, n_cols, *root);
+    colorize(pixels, n_rows, n_cols, *quadtree_root);
     spdlog::info("Colorize took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     spdlog::info("Write image");
+    sw.reset();
     stbi_write_jpg("result.jpg", n_cols, n_rows, 3, pixels, 100);
+    spdlog::info("Write image took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     delete[] pixels;
 

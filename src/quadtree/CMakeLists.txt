@@ -1,19 +1,12 @@
-add_library(quadtree
-        rgb.h
-        soa.h
-        quadtree.cpp
-        quadtree.h
-        quadrant.h
-        top_down.h
-        bottom_up.h)
+add_library(quadtree quadtree.cpp quadtree.h)
 
-if (LOG_QUADTREE_BUILD)
-    target_compile_definitions(quadtree PRIVATE LOG_QUADTREE_BUILD)
+target_link_libraries(quadtree PUBLIC rgb)
+
+target_link_libraries(quadtree PRIVATE spdlog::spdlog)
+target_link_libraries(quadtree PRIVATE Threads::Threads)
+
+if (LOG_QUADTREE)
+    target_compile_definitions(quadtree PUBLIC LOG_QUADTREE)
 endif ()
 
-if (PARALLEL)
-    # Fixme: why PUBLIC and not PRIVATE?
-    target_compile_definitions(quadtree PUBLIC PARALLEL)
-    find_package(Threads REQUIRED)
-    target_link_libraries(quadtree PRIVATE Threads::Threads)
-endif ()
+target_include_directories(quadtree INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

@@ -12,6 +12,7 @@ find_package(argparse REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Eigen3 3.4 REQUIRED)
 find_package(stb REQUIRED)
+find_package(Threads REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(apps)
