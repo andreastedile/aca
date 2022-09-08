@@ -3,7 +3,6 @@ argparse/2.6
 eigen/3.4.0
 spdlog/1.10.0
 stb/cci.20210910
-thrust/1.17.0
 
 [generators]
 cmake_find_package
