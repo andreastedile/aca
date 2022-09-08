@@ -26,7 +26,7 @@ class Quadtree final {
     Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<double> mean, RGB<double> std);
 
     [[nodiscard]] const std::variant<Fork, Leaf>& data() const;
-    [[nodiscard]] virtual Pixel color() const final;
+    [[nodiscard]] virtual RGB<unsigned char> color() const final;
     [[nodiscard]] virtual RGB<double> mean() const final;
     [[nodiscard]] virtual RGB<double> std() const final;
 
@@ -39,7 +39,7 @@ class Quadtree final {
 
   private:
     std::variant<Fork, Leaf> m_data;
-    Pixel m_color;
+    RGB<unsigned char> m_color;
     RGB<double> m_std;
     RGB<double> m_mean;
 

@@ -19,7 +19,7 @@ Quadtree::Quadtree(int height, int depth, int i, int j, int n_rows, int n_cols, 
       m_data(std::move(data)),
       m_std(std),
       m_mean(mean),
-      m_color{static_cast<color_t>(mean.r), static_cast<color_t>(mean.g), static_cast<color_t>(mean.b)}
+      m_color{static_cast<unsigned char>(mean.r), static_cast<unsigned char>(mean.g), static_cast<unsigned char>(mean.b)}
 #ifdef LOG_QUADTREE_BUILD
       ,
       indent(depth * 4)
@@ -43,7 +43,7 @@ const std::variant<Quadtree::Fork, Quadtree::Leaf>& Quadtree::data() const {
     return m_data;
 }
 
-Pixel Quadtree::color() const {
+RGB<unsigned char> Quadtree::color() const {
     return m_color;
 }
 
