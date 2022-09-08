@@ -20,5 +20,4 @@ find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 find_package(Thrust REQUIRED CONFIG)
 
 add_subdirectory(src)
-# add_subdirectory(src-cuda)
 add_subdirectory(apps)
