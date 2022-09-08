@@ -70,12 +70,8 @@ RGB<double> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree&
             pixels),
     };
 }
-#ifndef NPARALLEL
-std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth)
-#else
-std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold)
-#endif
-{
+
+std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
     if (quadrant->n_cols == 1) { // A leaf has been reached

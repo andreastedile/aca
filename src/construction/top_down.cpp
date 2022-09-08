@@ -13,12 +13,7 @@ bool should_split(double detail_threshold, const RGB<double>& std) {
            std.b > detail_threshold;
 }
 
-#ifndef NPARALLEL
-std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth)
-#else
-std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold)
-#endif
-{
+std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
     const auto mean = quadrant->mean();
@@ -63,10 +58,10 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
             sw = top_down_impl(quadrant->sw(), detail_threshold, depth + 1);
         }
 #else
-        nw = top_down_impl(quadrant->nw(), detail_threshold, height - 1, depth + 1);
-        ne = top_down_impl(quadrant->ne(), detail_threshold, height - 1, depth + 1);
-        se = top_down_impl(quadrant->se(), detail_threshold, height - 1, depth + 1);
-        sw = top_down_impl(quadrant->sw(), detail_threshold, height - 1, depth + 1);
+        nw = top_down_impl(quadrant->nw(), detail_threshold, depth + 1);
+        ne = top_down_impl(quadrant->ne(), detail_threshold, depth + 1);
+        se = top_down_impl(quadrant->se(), detail_threshold, depth + 1);
+        sw = top_down_impl(quadrant->sw(), detail_threshold, depth + 1);
 #endif
         return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
                                           quadrant->n_rows, quadrant->n_cols,
