@@ -23,10 +23,6 @@ int main(int argc, char* argv[]) {
         .default_value(false)
         .implicit_value(true)
         .help("specify whether to execute the top-down algorithm instead of the default bottom-up one");
-    app.add_argument("--max-depth")
-        .scan<'d', int>()
-        .default_value(8.0)
-        .help("specify the max depth");
     app.add_argument("--detail-threshold")
         .scan<'g', double>()
         .default_value(13.0)
