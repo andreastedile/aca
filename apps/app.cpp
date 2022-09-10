@@ -47,10 +47,10 @@ int main(int argc, char* argv[]) {
     unsigned char* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
     spdlog::info("Read took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
-    spdlog::info("Compute SoA");
+    spdlog::info("Flatten to RGB SoA");
     sw.reset();
     const auto soa = flatten_to_rgb_soa(pixels, n_rows * n_cols);
-    spdlog::info("Compute SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);
     std::unique_ptr<Quadtree> quadtree_root;
