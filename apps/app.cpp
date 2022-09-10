@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     const auto soa = flatten_to_rgb_soa(pixels, n_rows, n_cols);
     auto elapsed = sw.elapsed();
     spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
-    csv << elapsed.count() << ", ";
+    csv << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << ", ";
 
     auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);
     std::unique_ptr<Quadtree> quadtree_root;
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
     }
     elapsed = sw.elapsed();
     spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
-    csv << elapsed.count() << '\n';
+    csv << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << '\n';
 
     if (!no_output_file) {
         spdlog::info("Colorize");
