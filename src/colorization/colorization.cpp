@@ -2,7 +2,7 @@
 #include <variant>
 
 #include "../utils/overloaded.h"
-#include "colorizer.h"
+#include "colorization.h"
 
 void colorize_impl(unsigned char* pixels, int N_COLS, const Quadtree& quadtree) {
     auto visit_fork = [&](const Quadtree::Fork& fork) {

@@ -1,5 +1,5 @@
 #include "bottom_up.h"
-#include "colorizer.h"
+#include "colorization.h"
 #include "padding.h"
 #include "quadrant.h"
 #include "rgbsoa.h"
