@@ -27,12 +27,17 @@ int main(int argc, char* argv[]) {
         .scan<'g', double>()
         .default_value(13.0)
         .help("specify the detail threshold");
+    app.add_argument("--no-output-file")
+        .default_value(false)
+        .implicit_value(true)
+        .help("suppress the production of the resulting image");
 
     app.parse_args(argc, argv);
 
     auto input = app.get("input");
     auto do_top_down = app.get<bool>("--top-down");
     auto detail_threshold = app.get<double>("--detail-threshold");
+    auto no_output_file = app.get<bool>("--no-output-file");
 
     spdlog::stopwatch sw;
 
@@ -60,15 +65,17 @@ int main(int argc, char* argv[]) {
     }
     spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
-    spdlog::info("Colorize");
-    sw.reset();
-    colorize(pixels, n_rows, n_cols, *quadtree_root);
-    spdlog::info("Colorize took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    if (!no_output_file) {
+        spdlog::info("Colorize");
+        sw.reset();
+        colorize(pixels, n_rows, n_cols, *quadtree_root);
+        spdlog::info("Colorize took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
-    spdlog::info("Write image");
-    sw.reset();
-    stbi_write_jpg("result.jpg", n_cols, n_rows, 3, pixels, 100);
-    spdlog::info("Write image took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+        spdlog::info("Write image");
+        sw.reset();
+        stbi_write_jpg("result.jpg", n_cols, n_rows, 3, pixels, 100);
+        spdlog::info("Write image took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    }
 
     delete[] pixels;
 
