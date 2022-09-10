@@ -11,6 +11,6 @@ struct RGBSoA {
     EigenArray b;
 };
 
-RGBSoA flatten_to_rgb_soa(const unsigned char* pixels, int n_pixels);
+RGBSoA flatten_to_rgb_soa(const unsigned char* pixels, int n_rows, int n_cols);
 
 #endif // ACA_RGBSOA_H

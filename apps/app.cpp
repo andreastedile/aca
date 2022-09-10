@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
     spdlog::info("Flatten to RGB SoA");
     sw.reset();
-    const auto soa = flatten_to_rgb_soa(pixels, n_rows * n_cols);
+    const auto soa = flatten_to_rgb_soa(pixels, n_rows, n_cols);
     spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
 
     auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);

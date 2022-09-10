@@ -21,7 +21,7 @@ std::optional<unsigned char*> pad_image(const unsigned char* pixels, const int n
 
     new_rows = new_cols = get_closest_power_of_two(n_rows, n_cols);
 
-    unsigned char* new_pixels = new unsigned char[new_rows * new_cols * 3]{};
+    auto* new_pixels = new unsigned char[new_rows * new_cols * 3]{};
 
     for (int i = 0; i < n_rows; i++) {
         for (int j = 0; j < n_cols; j++) {
