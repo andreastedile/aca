@@ -6,6 +6,7 @@
 #include "top_down.h"
 
 #include <argparse/argparse.hpp>
+#include <fstream>
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <spdlog/stopwatch.h>
@@ -40,6 +41,9 @@ int main(int argc, char* argv[]) {
     auto detail_threshold = app.get<double>("--detail-threshold");
     auto no_output_file = app.get<bool>("--no-output-file");
 
+    std::ofstream csv("timings.csv");
+    csv << "flatten_ms, construction_ms\n";
+
     spdlog::stopwatch sw;
 
     spdlog::info("Read {}", input);
@@ -58,7 +62,9 @@ int main(int argc, char* argv[]) {
     spdlog::info("Flatten to RGB SoA");
     sw.reset();
     const auto soa = flatten_to_rgb_soa(pixels, n_rows, n_cols);
-    spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    auto elapsed = sw.elapsed();
+    spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
+    csv << elapsed.count() << ", ";
 
     auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);
     std::unique_ptr<Quadtree> quadtree_root;
@@ -71,7 +77,9 @@ int main(int argc, char* argv[]) {
         sw.reset();
         quadtree_root = bottom_up(std::move(quadrant), detail_threshold);
     }
-    spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    elapsed = sw.elapsed();
+    spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
+    csv << elapsed.count() << '\n';
 
     if (!no_output_file) {
         spdlog::info("Colorize");
