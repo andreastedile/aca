@@ -13,6 +13,8 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
+using ms = std::chrono::milliseconds;
+
 int main(int argc, char* argv[]) {
     spdlog::set_level(spdlog::level::debug);
 
@@ -45,12 +47,14 @@ int main(int argc, char* argv[]) {
     csv << "flatten_ms, construction_ms\n";
 
     spdlog::stopwatch sw;
+    std::chrono::duration<double> elapsed{};
 
     spdlog::info("Read {}", input);
     sw.reset();
     int n_rows, n_cols, n;
     unsigned char* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
-    spdlog::info("Read took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    elapsed = sw.elapsed();
+    spdlog::info("Read took {} ms", std::chrono::duration_cast<ms>(elapsed).count());
     spdlog::info("Image is {}x{}", n_rows, n_cols);
 
     if (auto new_pixels = pad_image(pixels, n_rows, n_cols, n_rows, n_cols); new_pixels.has_value()) {
@@ -62,9 +66,9 @@ int main(int argc, char* argv[]) {
     spdlog::info("Flatten to RGB SoA");
     sw.reset();
     const auto soa = flatten_to_rgb_soa(pixels, n_rows, n_cols);
-    auto elapsed = sw.elapsed();
-    spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
-    csv << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << ", ";
+    elapsed = sw.elapsed();
+    spdlog::info("Flatten to RGB SoA took {} ms", std::chrono::duration_cast<ms>(elapsed).count());
+    csv << std::chrono::duration_cast<ms>(elapsed).count() << ", ";
 
     auto quadrant = std::make_unique<Quadrant>(0, 0, n_rows, n_cols, soa);
     std::unique_ptr<Quadtree> quadtree_root;
@@ -78,19 +82,21 @@ int main(int argc, char* argv[]) {
         quadtree_root = bottom_up(std::move(quadrant), detail_threshold);
     }
     elapsed = sw.elapsed();
-    spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count());
-    csv << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << '\n';
+    spdlog::info("Build quadtree took {} ms", std::chrono::duration_cast<ms>(elapsed).count());
+    csv << std::chrono::duration_cast<ms>(elapsed).count() << '\n';
 
     if (!no_output_file) {
         spdlog::info("Colorize");
         sw.reset();
         colorize(pixels, n_rows, n_cols, *quadtree_root);
-        spdlog::info("Colorize took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+        elapsed = sw.elapsed();
+        spdlog::info("Colorize took {} ms", std::chrono::duration_cast<ms>(elapsed).count());
 
         spdlog::info("Write image");
         sw.reset();
         stbi_write_jpg("result.jpg", n_cols, n_rows, 3, pixels, 100);
-        spdlog::info("Write image took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+        elapsed = sw.elapsed();
+        spdlog::info("Write image took {} ms", std::chrono::duration_cast<ms>(elapsed).count());
     }
 
     delete[] pixels;
