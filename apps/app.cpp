@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 
     argparse::ArgumentParser app("app");
 
-    app.add_argument("input")
+    app.add_argument("--input")
         .required()
         .help("specify the input file");
     app.add_argument("--top-down")
