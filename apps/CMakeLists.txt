@@ -5,6 +5,7 @@ target_link_libraries(app PRIVATE quadtree)
 target_link_libraries(app PRIVATE quadrant)
 target_link_libraries(app PRIVATE construction)
 target_link_libraries(app PRIVATE colorizer)
+target_link_libraries(app PRIVATE util)
 
 target_compile_definitions(app PUBLIC STB_IMAGE_IMPLEMENTATION)
 target_compile_definitions(app PUBLIC STB_IMAGE_WRITE_IMPLEMENTATION)

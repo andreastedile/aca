@@ -1,5 +1,6 @@
 #include "bottom_up.h"
 #include "colorizer.h"
+#include "padding.h"
 #include "quadrant.h"
 #include "rgbsoa.h"
 #include "top_down.h"
@@ -46,6 +47,13 @@ int main(int argc, char* argv[]) {
     int n_rows, n_cols, n;
     unsigned char* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
     spdlog::info("Read took {} ms", std::chrono::duration_cast<std::chrono::milliseconds>(sw.elapsed()).count());
+    spdlog::info("Image is {}x{}", n_rows, n_cols);
+
+    if (auto new_pixels = pad_image(pixels, n_rows, n_cols, n_rows, n_cols); new_pixels.has_value()) {
+        delete[] pixels;
+        pixels = new_pixels.value();
+        spdlog::info("Image was padded, now is {}x{}", n_rows, n_cols);
+    }
 
     spdlog::info("Flatten to RGB SoA");
     sw.reset();
