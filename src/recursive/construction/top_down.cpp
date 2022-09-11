@@ -7,13 +7,13 @@
 
 #include <cmath>
 
-bool should_split(double detail_threshold, const RGB<double>& std) {
+bool should_split(float detail_threshold, const RGB<float>& std) {
     return std.r > detail_threshold ||
            std.g > detail_threshold ||
            std.b > detail_threshold;
 }
 
-std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth) {
+std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, float detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
     const auto mean = quadrant->mean();
@@ -26,10 +26,10 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
     spdlog::debug("sq mean: {}/{}/{}, ", +sq_mean.r, +sq_mean.g, +sq_mean.b);
 #endif
 
-    const auto std = RGB<double>{
-        std::sqrt(sq_mean.r - std::pow(mean.r, 2)),
-        std::sqrt(sq_mean.g - std::pow(mean.g, 2)),
-        std::sqrt(sq_mean.b - std::pow(mean.b, 2))};
+    const auto std = RGB<float>{
+        sqrtf(sq_mean.r - powf(mean.r, 2)),
+        sqrtf(sq_mean.g - powf(mean.g, 2)),
+        sqrtf(sq_mean.b - powf(mean.b, 2))};
 #ifdef LOG_CONSTRUCTION
     spdlog::debug("std: {}/{}/{}, ", std.r, std.g, std.b);
 #endif
@@ -78,6 +78,6 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, doub
     }
 }
 
-std::unique_ptr<Quadtree> top_down(std::unique_ptr<Quadrant> quadrant, double detail_threshold) {
+std::unique_ptr<Quadtree> top_down(std::unique_ptr<Quadrant> quadrant, float detail_threshold) {
     return top_down_impl(std::move(quadrant), detail_threshold, 0);
 }

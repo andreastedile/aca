@@ -1,8 +1,14 @@
 #include <cassert>
 #include <variant>
 
-#include "../utils/overloaded.h"
 #include "colorization.h"
+
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
 
 void colorize_impl(unsigned char* pixels, int N_COLS, const Quadtree& quadtree) {
     auto visit_fork = [&](const Quadtree::Fork& fork) {

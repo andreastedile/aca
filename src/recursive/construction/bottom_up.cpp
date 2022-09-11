@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-bool should_merge(double detail_threshold, const RGB<double>& std) {
+bool should_merge(float detail_threshold, const RGB<float>& std) {
     return std.r <= detail_threshold &&
            std.g <= detail_threshold &&
            std.b <= detail_threshold;
@@ -15,7 +15,7 @@ bool should_merge(double detail_threshold, const RGB<double>& std) {
 
 // source
 // https://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation/442050#442050
-RGB<double> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw) {
+RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw) {
     int pixels = nw.n_rows * nw.n_cols + ne.n_rows * ne.n_cols + se.n_rows * se.n_cols + sw.n_rows * sw.n_cols;
     auto nw_mean = nw.mean(),
          ne_mean = ne.mean(),
@@ -32,7 +32,7 @@ RGB<double> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree
     };
 }
 
-RGB<double> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw, const RGB<double>& mean) {
+RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw, const RGB<float>& mean) {
     int pixels = nw.n_rows * nw.n_cols + ne.n_rows * ne.n_cols + se.n_rows * se.n_cols + sw.n_rows * sw.n_cols;
     auto nw_mean = nw.mean(),
          ne_mean = ne.mean(),
@@ -48,30 +48,30 @@ RGB<double> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree&
          sw_pixels = sw.n_rows * nw.n_cols;
 
     return {
-        std::sqrt(
-            (std::pow(nw_std.r, 2) * nw_pixels + nw_pixels * std::pow(mean.r - nw_mean.r, 2) +
-             std::pow(ne_std.r, 2) * ne_pixels + ne_pixels * std::pow(mean.r - ne_mean.r, 2) +
-             std::pow(se_std.r, 2) * se_pixels + se_pixels * std::pow(mean.r - se_mean.r, 2) +
-             std::pow(sw_std.r, 2) * sw_pixels + sw_pixels * std::pow(mean.r - sw_mean.r, 2)) /
+        sqrtf(
+            (powf(nw_std.r, 2) * nw_pixels + nw_pixels * powf(mean.r - nw_mean.r, 2) +
+             powf(ne_std.r, 2) * ne_pixels + ne_pixels * powf(mean.r - ne_mean.r, 2) +
+             powf(se_std.r, 2) * se_pixels + se_pixels * powf(mean.r - se_mean.r, 2) +
+             powf(sw_std.r, 2) * sw_pixels + sw_pixels * powf(mean.r - sw_mean.r, 2)) /
             pixels),
 
-        std::sqrt(
-            (std::pow(nw_std.g, 2) * nw_pixels + nw_pixels * std::pow(mean.g - nw_mean.g, 2) +
-             std::pow(ne_std.g, 2) * ne_pixels + ne_pixels * std::pow(mean.g - ne_mean.g, 2) +
-             std::pow(se_std.g, 2) * se_pixels + se_pixels * std::pow(mean.g - se_mean.g, 2) +
-             std::pow(sw_std.g, 2) * sw_pixels + sw_pixels * std::pow(mean.g - sw_mean.g, 2)) /
+        sqrtf(
+            (powf(nw_std.g, 2) * nw_pixels + nw_pixels * powf(mean.g - nw_mean.g, 2) +
+             powf(ne_std.g, 2) * ne_pixels + ne_pixels * powf(mean.g - ne_mean.g, 2) +
+             powf(se_std.g, 2) * se_pixels + se_pixels * powf(mean.g - se_mean.g, 2) +
+             powf(sw_std.g, 2) * sw_pixels + sw_pixels * powf(mean.g - sw_mean.g, 2)) /
             pixels),
 
-        std::sqrt(
-            (std::pow(nw_std.b, 2) * nw_pixels + nw_pixels * std::pow(mean.b - nw_mean.b, 2) +
-             std::pow(ne_std.b, 2) * ne_pixels + ne_pixels * std::pow(mean.b - ne_mean.b, 2) +
-             std::pow(se_std.b, 2) * se_pixels + se_pixels * std::pow(mean.b - se_mean.b, 2) +
-             std::pow(sw_std.b, 2) * sw_pixels + sw_pixels * std::pow(mean.b - sw_mean.b, 2)) /
+        sqrtf(
+            (powf(nw_std.b, 2) * nw_pixels + nw_pixels * powf(mean.b - nw_mean.b, 2) +
+             powf(ne_std.b, 2) * ne_pixels + ne_pixels * powf(mean.b - ne_mean.b, 2) +
+             powf(se_std.b, 2) * se_pixels + se_pixels * powf(mean.b - se_mean.b, 2) +
+             powf(sw_std.b, 2) * sw_pixels + sw_pixels * powf(mean.b - sw_mean.b, 2)) /
             pixels),
     };
 }
 
-std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, double detail_threshold, int depth) {
+std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, float detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
     if (quadrant->n_cols == 1) { // A leaf has been reached
@@ -84,10 +84,10 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, dou
 #ifdef LOG_CONSTRUCTION
         spdlog::debug("sq mean: {}/{}/{}, ", +sq_mean.r, +sq_mean.g, +sq_mean.b);
 #endif
-        const auto std = RGB<double>{
-            std::sqrt(sq_mean.r - std::pow(mean.r, 2)),
-            std::sqrt(sq_mean.g - std::pow(mean.g, 2)),
-            std::sqrt(sq_mean.b - std::pow(mean.b, 2))};
+        const auto std = RGB<float>{
+            sqrtf(sq_mean.r - powf(mean.r, 2)),
+            sqrtf(sq_mean.g - powf(mean.g, 2)),
+            sqrtf(sq_mean.b - powf(mean.b, 2))};
 #ifdef LOG_CONSTRUCTION
         spdlog::debug("std: {}/{}/{}, ", std.r, std.g, std.b);
 #endif
@@ -143,6 +143,6 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, dou
     }
 }
 
-std::unique_ptr<Quadtree> bottom_up(std::unique_ptr<Quadrant> quadrant, double detail_threshold) {
+std::unique_ptr<Quadtree> bottom_up(std::unique_ptr<Quadrant> quadrant, float detail_threshold) {
     return bottom_up_impl(std::move(quadrant), detail_threshold, 0);
 }

@@ -1,5 +1,4 @@
-#ifndef ACA_RGBSOA_H
-#define ACA_RGBSOA_H
+#pragma once
 
 #include <Eigen/Eigen>
 
@@ -12,5 +11,3 @@ struct RGBSoA {
 };
 
 RGBSoA flatten_to_rgb_soa(const unsigned char* pixels, int n_rows, int n_cols);
-
-#endif // ACA_RGBSOA_H

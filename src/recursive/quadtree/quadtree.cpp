@@ -9,7 +9,7 @@ Quadtree::Fork::Fork(std::unique_ptr<const Quadtree> nw, std::unique_ptr<const Q
     : nw(std::move(nw)), ne(std::move(ne)), se(std::move(se)), sw(std::move(sw)) {
 }
 
-Quadtree::Quadtree(int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<double> mean, RGB<double> std)
+Quadtree::Quadtree(int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<float> mean, RGB<float> std)
     : i(i), j(j),
       n_rows(n_rows), n_cols(n_cols),
       m_data(std::move(data)),
@@ -34,10 +34,10 @@ RGB<unsigned char> Quadtree::color() const {
     return m_color;
 }
 
-RGB<double> Quadtree::mean() const {
+RGB<float> Quadtree::mean() const {
     return m_mean;
 }
 
-RGB<double> Quadtree::std() const {
+RGB<float> Quadtree::std() const {
     return m_std;
 }

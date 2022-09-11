@@ -1,5 +1,4 @@
-#ifndef ACA_EIGEN_QUADRANT_H
-#define ACA_EIGEN_QUADRANT_H
+#pragma once
 
 #include "quadrant.h"
 #include "rgb.h"
@@ -12,8 +11,8 @@ class Quadrant final {
     Quadrant(int i, int j, int n_rows, int n_cols, const RGBSoA& soa);
     Quadrant(int i, int j, int n_rows, int n_cols, const RGBSoA& soa, int left, int length);
 
-    [[nodiscard]] RGB<double> mean() const;
-    [[nodiscard]] RGB<double> sq_mean() const;
+    [[nodiscard]] RGB<float> mean() const;
+    [[nodiscard]] RGB<float> sq_mean() const;
 
     [[nodiscard]] std::unique_ptr<Quadrant> nw() const;
     [[nodiscard]] std::unique_ptr<Quadrant> ne() const;
@@ -30,5 +29,3 @@ class Quadrant final {
     const int left;
     const int length;
 };
-
-#endif // ACA_EIGEN_QUADRANT_H

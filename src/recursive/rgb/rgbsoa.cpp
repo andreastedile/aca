@@ -1,21 +1,21 @@
 #include "rgbsoa.h"
 
 void flatten_to_rgb_soa_impl(const unsigned char* pixels, RGBSoA& soa,
-                             int i, int j, int n_rows, int n_cols,
+                             int q_i, int q_j, int q_n_rows, int q_n_cols,
                              int idx, int N_COLS) {
-    if (n_cols == 1) {
-        soa.r(idx) = pixels[(i * N_COLS + j) * 3 + 0];
-        soa.g(idx) = pixels[(i * N_COLS + j) * 3 + 1];
-        soa.b(idx) = pixels[(i * N_COLS + j) * 3 + 2];
+    if (q_n_cols == 1) {
+        soa.r(idx) = pixels[(q_i * N_COLS + q_j) * 3 + 0];
+        soa.g(idx) = pixels[(q_i * N_COLS + q_j) * 3 + 1];
+        soa.b(idx) = pixels[(q_i * N_COLS + q_j) * 3 + 2];
     } else {
-        int q_rows = n_rows / 2;
-        int q_cols = n_cols / 2;
-        auto q_size = q_rows * q_cols;
+        int subq_n_rows = q_n_rows / 2;
+        int subq_n_cols = q_n_cols / 2;
+        int subq_n_pixels = subq_n_rows * subq_n_cols;
         // clang-format off
-        flatten_to_rgb_soa_impl(pixels, soa, i + 0,      j + 0,      q_rows, q_cols, idx + q_size * 0, N_COLS); // nw
-        flatten_to_rgb_soa_impl(pixels, soa, i + 0,      j + q_cols, q_rows, q_cols, idx + q_size * 1, N_COLS); // ne
-        flatten_to_rgb_soa_impl(pixels, soa, i + q_rows, j + 0,      q_rows, q_cols, idx + q_size * 2, N_COLS); // sw
-        flatten_to_rgb_soa_impl(pixels, soa, i + q_rows, j + q_cols, q_rows, q_cols, idx + q_size * 3, N_COLS); // se
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + 0,           q_j + 0,           subq_n_rows, subq_n_cols, idx + subq_n_pixels * 0, N_COLS); // nw
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + 0,           q_j + subq_n_cols, subq_n_rows, subq_n_cols, idx + subq_n_pixels * 1, N_COLS); // ne
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + 0,           subq_n_rows, subq_n_cols, idx + subq_n_pixels * 2, N_COLS); // sw
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + subq_n_cols, subq_n_rows, subq_n_cols, idx + subq_n_pixels * 3, N_COLS); // se
         // clang-format on
     }
 }

@@ -1,5 +1,4 @@
-#ifndef ACA_QUADTREE_H
-#define ACA_QUADTREE_H
+#pragma once
 
 #include "rgb.h"
 
@@ -20,12 +19,12 @@ class Quadtree final {
     };
     struct Leaf {};
 
-    Quadtree(int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<double> mean, RGB<double> std);
+    Quadtree(int i, int j, int n_rows, int n_cols, std::variant<Fork, Leaf> data, RGB<float> mean, RGB<float> std);
 
     [[nodiscard]] const std::variant<Fork, Leaf>& data() const;
     [[nodiscard]] RGB<unsigned char> color() const;
-    [[nodiscard]] RGB<double> mean() const;
-    [[nodiscard]] RGB<double> std() const;
+    [[nodiscard]] RGB<float> mean() const;
+    [[nodiscard]] RGB<float> std() const;
 
     const int i;
     const int j;
@@ -35,8 +34,6 @@ class Quadtree final {
   private:
     std::variant<Fork, Leaf> m_data;
     RGB<unsigned char> m_color;
-    RGB<double> m_std;
-    RGB<double> m_mean;
+    RGB<float> m_std;
+    RGB<float> m_mean;
 };
-
-#endif // ACA_QUADTREE_H

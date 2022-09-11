@@ -1,5 +1,4 @@
-#ifndef ACA_RGB_H
-#define ACA_RGB_H
+#pragma once
 
 template <typename T>
 struct RGB {
@@ -7,5 +6,3 @@ struct RGB {
     T g;
     T b;
 };
-
-#endif // ACA_RGB_H

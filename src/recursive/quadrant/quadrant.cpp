@@ -13,16 +13,16 @@ Quadrant::Quadrant(int i, int j, int n_rows, int n_cols, const RGBSoA& soa, int 
     assert(n_cols >= 1);
 }
 
-RGB<double> Quadrant::mean() const {
-    return {soa.r.middleCols(left, length).cast<double>().mean(),
-            soa.g.middleCols(left, length).cast<double>().mean(),
-            soa.b.middleCols(left, length).cast<double>().mean()};
+RGB<float> Quadrant::mean() const {
+    return {soa.r.middleCols(left, length).cast<float>().mean(),
+            soa.g.middleCols(left, length).cast<float>().mean(),
+            soa.b.middleCols(left, length).cast<float>().mean()};
 }
 
-RGB<double> Quadrant::sq_mean() const {
-    return {soa.r.middleCols(left, length).cast<double>().square().mean(),
-            soa.g.middleCols(left, length).cast<double>().square().mean(),
-            soa.b.middleCols(left, length).cast<double>().square().mean()};
+RGB<float> Quadrant::sq_mean() const {
+    return {soa.r.middleCols(left, length).cast<float>().square().mean(),
+            soa.g.middleCols(left, length).cast<float>().square().mean(),
+            soa.b.middleCols(left, length).cast<float>().square().mean()};
 }
 
 std::unique_ptr<Quadrant> Quadrant::nw() const {
