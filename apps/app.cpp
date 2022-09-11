@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     app.parse_args(argc, argv);
 
-    auto input = app.get("input");
+    auto input = app.get("--input");
     auto do_top_down = app.get<bool>("--top-down");
     auto detail_threshold = app.get<double>("--detail-threshold");
     auto no_output_file = app.get<bool>("--no-output-file");
