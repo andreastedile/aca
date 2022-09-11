@@ -1,6 +1,1 @@
-add_subdirectory(rgb)
-add_subdirectory(quadrant)
-add_subdirectory(quadtree)
-add_subdirectory(construction)
-add_subdirectory(colorization)
-add_subdirectory(utils)
+add_subdirectory(recursive)
