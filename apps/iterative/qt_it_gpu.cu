@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     argparse::ArgumentParser app("qt-it");
 
-    app.add_argument("input")
+    app.add_argument("--input")
         .required()
         .help("specify the input file");
     app.add_argument("--detail-threshold")
@@ -92,12 +92,12 @@ int main(int argc, char* argv[]) {
     RGBAoS d_aos(d_aos_aos, n_pixels);
     auto allocate_device_end = Clock::now();
 
-    delete[] h_aos.aos;
-
     spdlog::info("Copy RGB AoS on the device");
     auto copy_to_device_start = Clock::now();
     CHECK(cudaMemcpy(d_aos_aos, h_aos.aos, n_pixels * sizeof(RGB<unsigned char>), cudaMemcpyHostToDevice));
     auto copy_to_device_end = Clock::now();
+
+    delete[] h_aos.aos;
 
     spdlog::info("Construct quadtree array on device (launch: {}/{}, n leaves per thread: {})", n_blocks, n_threads, n_leaves_per_thread);
     auto construct_device_start = Clock::now();
@@ -129,11 +129,11 @@ int main(int argc, char* argv[]) {
     if (csv) {
         std::ofstream file("timings.csv");
         file << "flatten_ms, allocate_device_ms, copy_to_device_ms, construct_on_device_ms, allocate_on_host_ms, construct_on_host_ms\n";
-        file << std::chrono::duration_cast<ms>(flatten_end - flatten_start).count() << '\n';
-        file << std::chrono::duration_cast<ms>(allocate_device_end - allocate_device_start).count() << '\n';
-        file << std::chrono::duration_cast<ms>(copy_to_device_end - copy_to_host_start).count() << '\n';
-        file << std::chrono::duration_cast<ms>(construct_device_end - construct_device_start).count() << '\n';
-        file << std::chrono::duration_cast<ms>(allocate_on_host_end - allocate_on_host_start).count() << '\n';
+        file << std::chrono::duration_cast<ms>(flatten_end - flatten_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(allocate_device_end - allocate_device_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(copy_to_device_end - copy_to_host_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(construct_device_end - construct_device_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(allocate_on_host_end - allocate_on_host_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(construct_on_host_end - construct_on_host_start).count() << '\n';
     }
 

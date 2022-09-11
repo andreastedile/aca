@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     if (csv) {
         std::ofstream file("timings.csv");
         file << "flatten_ms, construct_ms\n";
-        file << std::chrono::duration_cast<ms>(flatten_end - flatten_start).count() << '\n';
+        file << std::chrono::duration_cast<ms>(flatten_end - flatten_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(construct_end - construct_start).count() << '\n';
     }
 
