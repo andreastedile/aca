@@ -1,0 +1,6 @@
+[
+  {
+    "name": "HPC",
+    "toolchainFile": "${workspaceFolder}/cmake/toolchain-hpc.cmake"
+  }
+]
