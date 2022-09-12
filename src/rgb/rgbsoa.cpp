@@ -14,8 +14,8 @@ void flatten_to_rgb_soa_impl(const unsigned char* pixels, RGBSoA& soa,
         // clang-format off
         flatten_to_rgb_soa_impl(pixels, soa, q_i + 0,           q_j + 0,           subq_n_rows, subq_n_cols, idx + subq_n_pixels * 0, N_COLS); // nw
         flatten_to_rgb_soa_impl(pixels, soa, q_i + 0,           q_j + subq_n_cols, subq_n_rows, subq_n_cols, idx + subq_n_pixels * 1, N_COLS); // ne
-        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + 0,           subq_n_rows, subq_n_cols, idx + subq_n_pixels * 2, N_COLS); // sw
-        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + subq_n_cols, subq_n_rows, subq_n_cols, idx + subq_n_pixels * 3, N_COLS); // se
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + subq_n_cols, subq_n_rows, subq_n_cols, idx + subq_n_pixels * 2, N_COLS); // se
+        flatten_to_rgb_soa_impl(pixels, soa, q_i + subq_n_rows, q_j + 0,           subq_n_rows, subq_n_cols, idx + subq_n_pixels * 3, N_COLS); // sw
         // clang-format on
     }
 }

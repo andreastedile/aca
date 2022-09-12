@@ -130,7 +130,7 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, flo
 #endif
             return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
                                               quadrant->n_rows, quadrant->n_cols,
-                                              Quadtree::Fork{std::move(nw), std::move(ne), std::move(sw), std::move(se)},
+                                              Quadtree::Fork{std::move(nw), std::move(ne), std::move(se), std::move(sw)},
                                               mean, std);
         }
     }
