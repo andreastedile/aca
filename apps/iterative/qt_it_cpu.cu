@@ -1,5 +1,6 @@
 #include "colorization.h"
 #include "construction_host.h"
+#include "io.h"
 #include "node.h"
 #include "padding.h"
 #include "qtmath.h"
@@ -10,8 +11,6 @@
 #include <fstream>
 #include <omp.h>
 #include <spdlog/spdlog.h>
-#include <stb_image.h>
-#include <stb_image_write.h>
 
 using Clock = std::chrono::steady_clock;
 using ms = std::chrono::milliseconds;
@@ -46,18 +45,7 @@ int main(int argc, char* argv[]) {
 
     spdlog::info("Read {}", input);
     int n_rows, n_cols, n = 0;
-    unsigned char* pixels = stbi_load(input.c_str(), &n_cols, &n_rows, &n, 3);
-    if (pixels == nullptr) {
-        spdlog::error("File {} does not exist", input);
-        std::exit(EXIT_FAILURE);
-    }
-    spdlog::info("Image is {}x{}", n_rows, n_cols);
-
-    if (auto new_pixels = pad_image(pixels, n_rows, n_cols, n_rows, n_cols); new_pixels.has_value()) {
-        delete[] pixels;
-        pixels = new_pixels.value();
-        spdlog::info("Image was padded, now is {}x{}", n_rows, n_cols);
-    }
+    unsigned char* pixels = read_image(input, n_rows, n_cols);
 
     int n_pixels = n_rows * n_cols;
 
@@ -102,7 +90,7 @@ int main(int argc, char* argv[]) {
 
             spdlog::info("Write image");
             auto output = std::string("level") + std::to_string(i) + std::string(".jpg");
-            stbi_write_jpg(output.c_str(), n_cols, n_rows, 3, pixels, 100);
+            write_image(pixels, output, n_rows, n_cols);
         }
     }
 

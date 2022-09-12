@@ -1,3 +1,5 @@
 add_subdirectory(recursive)
 add_subdirectory(iterative)
+# add_subdirectory(rgb)
+add_subdirectory(io)
 add_subdirectory(util)
