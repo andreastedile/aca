@@ -24,7 +24,7 @@ RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree&
     auto nw_pixels = nw.n_rows * nw.n_cols,
          ne_pixels = ne.n_rows * ne.n_cols,
          se_pixels = se.n_rows * se.n_cols,
-         sw_pixels = sw.n_rows * nw.n_cols;
+         sw_pixels = sw.n_rows * sw.n_cols;
     return {
         (nw_mean.r * nw_pixels + ne_mean.r * ne_pixels + se_mean.r * se_pixels + sw_mean.r * sw_pixels) / pixels,
         (nw_mean.g * nw_pixels + ne_mean.g * ne_pixels + se_mean.g * se_pixels + sw_mean.g * sw_pixels) / pixels,
@@ -45,7 +45,7 @@ RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& 
     auto nw_pixels = nw.n_rows * nw.n_cols,
          ne_pixels = ne.n_rows * ne.n_cols,
          se_pixels = se.n_rows * se.n_cols,
-         sw_pixels = sw.n_rows * nw.n_cols;
+         sw_pixels = sw.n_rows * sw.n_cols;
 
     return {
         sqrtf(
