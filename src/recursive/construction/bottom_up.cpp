@@ -16,58 +16,42 @@ bool should_merge(float detail_threshold, const RGB<float>& std) {
 // source
 // https://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation/442050#442050
 RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw) {
-    int pixels = nw.n_rows * nw.n_cols + ne.n_rows * ne.n_cols + se.n_rows * se.n_cols + sw.n_rows * sw.n_cols;
     auto nw_mean = nw.mean(),
          ne_mean = ne.mean(),
          se_mean = se.mean(),
          sw_mean = sw.mean();
-    auto nw_pixels = nw.n_rows * nw.n_cols,
-         ne_pixels = ne.n_rows * ne.n_cols,
-         se_pixels = se.n_rows * se.n_cols,
-         sw_pixels = sw.n_rows * sw.n_cols;
     return {
-        (nw_mean.r * nw_pixels + ne_mean.r * ne_pixels + se_mean.r * se_pixels + sw_mean.r * sw_pixels) / pixels,
-        (nw_mean.g * nw_pixels + ne_mean.g * ne_pixels + se_mean.g * se_pixels + sw_mean.g * sw_pixels) / pixels,
-        (nw_mean.b * nw_pixels + ne_mean.b * ne_pixels + se_mean.b * se_pixels + sw_mean.b * sw_pixels) / pixels,
+        (nw_mean.r + ne_mean.r + se_mean.r + sw_mean.r) / 4,
+        (nw_mean.g + ne_mean.g + se_mean.g + sw_mean.g) / 4,
+        (nw_mean.b + ne_mean.b + se_mean.b + sw_mean.b) / 4,
     };
 }
 
 RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw, const RGB<float>& mean) {
-    int pixels = nw.n_rows * nw.n_cols + ne.n_rows * ne.n_cols + se.n_rows * se.n_cols + sw.n_rows * sw.n_cols;
-    auto nw_mean = nw.mean(),
-         ne_mean = ne.mean(),
-         se_mean = se.mean(),
-         sw_mean = sw.mean();
-    auto nw_std = nw.std(),
-         ne_std = ne.std(),
-         se_std = se.std(),
-         sw_std = sw.std();
-    auto nw_pixels = nw.n_rows * nw.n_cols,
-         ne_pixels = ne.n_rows * ne.n_cols,
-         se_pixels = se.n_rows * se.n_cols,
-         sw_pixels = sw.n_rows * sw.n_cols;
+    RGB<float> nw_mean = nw.mean(),
+               ne_mean = ne.mean(),
+               se_mean = se.mean(),
+               sw_mean = sw.mean();
+    RGB<float> nw_std = nw.std(),
+               ne_std = ne.std(),
+               se_std = se.std(),
+               sw_std = sw.std();
+
+    auto combine = [](float nw_std, float ne_std, float se_std, float sw_std,
+                      float nw_mean, float ne_mean, float se_mean, float sw_mean,
+                      float mean) {
+        return sqrtf(
+                   square(nw_std) + square(mean - nw_mean) +
+                   square(ne_std) + square(mean - ne_mean) +
+                   square(se_std) + square(mean - se_mean) +
+                   square(sw_std) + square(mean - sw_mean)) /
+               2;
+    };
 
     return {
-        sqrtf(
-            (powf(nw_std.r, 2) * nw_pixels + nw_pixels * powf(mean.r - nw_mean.r, 2) +
-             powf(ne_std.r, 2) * ne_pixels + ne_pixels * powf(mean.r - ne_mean.r, 2) +
-             powf(se_std.r, 2) * se_pixels + se_pixels * powf(mean.r - se_mean.r, 2) +
-             powf(sw_std.r, 2) * sw_pixels + sw_pixels * powf(mean.r - sw_mean.r, 2)) /
-            pixels),
-
-        sqrtf(
-            (powf(nw_std.g, 2) * nw_pixels + nw_pixels * powf(mean.g - nw_mean.g, 2) +
-             powf(ne_std.g, 2) * ne_pixels + ne_pixels * powf(mean.g - ne_mean.g, 2) +
-             powf(se_std.g, 2) * se_pixels + se_pixels * powf(mean.g - se_mean.g, 2) +
-             powf(sw_std.g, 2) * sw_pixels + sw_pixels * powf(mean.g - sw_mean.g, 2)) /
-            pixels),
-
-        sqrtf(
-            (powf(nw_std.b, 2) * nw_pixels + nw_pixels * powf(mean.b - nw_mean.b, 2) +
-             powf(ne_std.b, 2) * ne_pixels + ne_pixels * powf(mean.b - ne_mean.b, 2) +
-             powf(se_std.b, 2) * se_pixels + se_pixels * powf(mean.b - se_mean.b, 2) +
-             powf(sw_std.b, 2) * sw_pixels + sw_pixels * powf(mean.b - sw_mean.b, 2)) /
-            pixels),
+        combine(nw_std.r, ne_std.r, se_std.r, sw_std.r, nw_mean.r, ne_mean.r, se_mean.r, sw_mean.r, mean.r),
+        combine(nw_std.g, ne_std.g, se_std.g, sw_std.g, nw_mean.g, ne_mean.g, se_mean.g, sw_mean.g, mean.g),
+        combine(nw_std.b, ne_std.b, se_std.b, sw_std.b, nw_mean.b, ne_mean.b, se_mean.b, sw_mean.b, mean.b),
     };
 }
 
