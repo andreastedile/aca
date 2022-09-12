@@ -15,3 +15,20 @@ target_link_libraries(qt-it-gpu PRIVATE argparse::argparse)
 target_link_libraries(qt-it-gpu PRIVATE spdlog::spdlog)
 target_link_libraries(qt-it-gpu PRIVATE stb::stb)
 target_link_libraries(qt-it-gpu PRIVATE OpenMP::OpenMP_CXX)
+
+
+add_executable(qt-it-cpu qt_it_cpu.cu)
+
+target_link_libraries(qt-it-cpu PRIVATE irgb)
+target_link_libraries(qt-it-cpu PRIVATE inode)
+target_link_libraries(qt-it-cpu PRIVATE iconstruction)
+target_link_libraries(qt-it-cpu PRIVATE icolorization)
+target_link_libraries(qt-it-cpu PRIVATE util)
+
+target_compile_definitions(qt-it-cpu PUBLIC STB_IMAGE_IMPLEMENTATION)
+target_compile_definitions(qt-it-cpu PUBLIC STB_IMAGE_WRITE_IMPLEMENTATION)
+
+target_link_libraries(qt-it-cpu PRIVATE argparse::argparse)
+target_link_libraries(qt-it-cpu PRIVATE spdlog::spdlog)
+target_link_libraries(qt-it-cpu PRIVATE stb::stb)
+target_link_libraries(qt-it-cpu PRIVATE OpenMP::OpenMP_CXX)
