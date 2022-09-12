@@ -1,30 +1,26 @@
 #pragma once
 
-#ifdef __CUDACC__
-#define CUDA_HOSTDEV __host__ __device__
-#else
-#define CUDA_HOSTDEV
-#endif
+#include <cmath>
 
 // compute 2*n
-CUDA_HOSTDEV int times2(int n);
+#define times2(n) ((n) << 1)
 
 // compute 2^n
-CUDA_HOSTDEV int pow_base2(int n);
+#define pow_base2(n) (1 << (n))
 
 // compute 4^n = 2^(2n)
-CUDA_HOSTDEV int pow_base4(int n);
+#define pow_base4(n) pow_base2(times2(n))
 
-CUDA_HOSTDEV int div2(int n);
+#define div2(n) ((n) >> 1)
 
-CUDA_HOSTDEV int div4(int n);
+#define div4(n) ((n) >> 2)
 
-CUDA_HOSTDEV int times4(int n);
+#define times4(n) ((n) << 2)
 
-CUDA_HOSTDEV int square(int n);
+#define square(n) ((n) * (n))
 
-CUDA_HOSTDEV int log4(int n);
+#define log4(n) div2(int(std::log2(n)))
 
-CUDA_HOSTDEV bool is_pow2(int n);
+#define is_pow2(n) ((n) == std::pow(2, int(std::log2(n))))
 
-CUDA_HOSTDEV bool is_pow4(int n);
+#define is_pow4(n) ((n) == std::pow(4, log4(n)))
