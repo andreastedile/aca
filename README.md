@@ -7,8 +7,6 @@ at University of Trento, taught by professor R. Passerone in the 2021/2022 A.Y. 
 approaches to the parallelization of the Quadtree image decomposition algorithm, such as CPU-based, CUDA-based and
 mixed approaches.
 
-**This repository implements the CPU approaches.**
-
 ## Compile
 
 Locally:
@@ -33,16 +31,20 @@ conan install --build=missing ..
 
 ## Usage
 
+Once the project is built, four apps are produced: `qt-rec-td`, `qt-rec-bu`, `qt-it-gpu`, `qt-it-cpu`.
+
+To print the usage of an application, do, for example, `./qt-rec-td -h`.
+
 ```shell
-Usage: app [options] 
+Usage: qt-rec [options] 
 
 Optional arguments:
--h --help          	shows help message and exits [default: false]
--v --version       	prints version information and exits [default: false]
---input            	specify the input file [required]
---top-down         	specify whether to execute the top-down algorithm instead of the default bottom-up one [default: false]
---detail-threshold 	specify the detail threshold [default: 13]
---no-output-file   	suppress the production of the resulting image [default: false]
+-h --help               shows help message and exits [default: false]
+-v --version            prints version information and exits [default: false]
+--input                 specify the input file [required]
+--detail-threshold      specify the detail threshold [default: 13]
+--no-output-file        suppress the production of the resulting image [default: false]
+--csv                   writes timing information to csv file [default: false]
 ```
 
 ![Demo](https://github.com/andreastedile/aca/blob/master/demo/result.gif)
