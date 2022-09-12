@@ -116,12 +116,13 @@ int main(int argc, char* argv[]) {
 
     if (csv) {
         std::ofstream file("timings.csv");
-        file << "flatten_ms, allocate_device_ms, copy_to_device_ms, construct_on_device_ms, allocate_on_host_ms, construct_on_host_ms\n";
+        file << "flatten_ms, allocate_device_ms, copy_to_device_ms, construct_on_device_ms, allocate_on_host_ms, copy_to_host_ms, construct_on_host_ms\n";
         file << std::chrono::duration_cast<ms>(flatten_end - flatten_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(allocate_device_end - allocate_device_start).count() << ", ";
-        file << std::chrono::duration_cast<ms>(copy_to_device_end - copy_to_host_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(copy_to_device_end - copy_to_device_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(construct_device_end - construct_device_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(allocate_on_host_end - allocate_on_host_start).count() << ", ";
+        file << std::chrono::duration_cast<ms>(copy_to_host_end - copy_to_host_start).count() << ", ";
         file << std::chrono::duration_cast<ms>(construct_on_host_end - construct_on_host_start).count() << '\n';
     }
 
