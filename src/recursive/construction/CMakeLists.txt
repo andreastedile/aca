@@ -3,6 +3,7 @@ add_library(construction bottom_up.cpp bottom_up.h top_down.cpp top_down.h)
 target_link_libraries(construction PUBLIC rgb)
 target_link_libraries(construction PUBLIC quadtree)
 target_link_libraries(construction PUBLIC quadrant)
+target_link_libraries(construction PUBLIC util)
 
 target_link_libraries(construction PRIVATE spdlog::spdlog)
 

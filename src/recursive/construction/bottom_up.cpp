@@ -1,4 +1,5 @@
 #include "bottom_up.h"
+#include "qtmath.h"
 #include "quadrant.h"
 #include "quadtree.h"
 
