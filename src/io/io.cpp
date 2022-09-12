@@ -1,6 +1,7 @@
 #include "io.h"
 #include "padding.h"
 
+#include <cstdlib>
 #include <spdlog/spdlog.h>
 #include <stb_image.h>
 #include <stb_image_write.h>
