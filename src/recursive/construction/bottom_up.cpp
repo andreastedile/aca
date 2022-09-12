@@ -80,14 +80,7 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, flo
         spdlog::debug("mean: {}/{}/{}, ", +mean.r, +mean.g, +mean.b);
 #endif
 
-        const auto sq_mean = quadrant->sq_mean();
-#ifdef LOG_CONSTRUCTION
-        spdlog::debug("sq mean: {}/{}/{}, ", +sq_mean.r, +sq_mean.g, +sq_mean.b);
-#endif
-        const auto std = RGB<float>{
-            sqrtf(sq_mean.r - powf(mean.r, 2)),
-            sqrtf(sq_mean.g - powf(mean.g, 2)),
-            sqrtf(sq_mean.b - powf(mean.b, 2))};
+        const auto std = RGB<float>{0, 0, 0};
 #ifdef LOG_CONSTRUCTION
         spdlog::debug("std: {}/{}/{}, ", std.r, std.g, std.b);
 #endif

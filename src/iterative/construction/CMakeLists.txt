@@ -8,7 +8,7 @@ add_library(iconstruction
 # ptxas fatal   : Unresolved extern function '_Z18make_internal_nodeR4NodeS0_S0_S0_f'
 set_target_properties(iconstruction PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
-target_link_libraries(iconstruction PUBLIC irgb)
+target_link_libraries(iconstruction PUBLIC rgb)
 target_link_libraries(iconstruction PUBLIC inode)
 target_link_libraries(iconstruction PRIVATE util)
 
