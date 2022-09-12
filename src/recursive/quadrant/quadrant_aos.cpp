@@ -43,13 +43,13 @@ std::unique_ptr<Quadrant> QuadrantAoS::ne() const {
 }
 
 std::unique_ptr<Quadrant> QuadrantAoS::se() const {
-    return std::make_unique<QuadrantAoS>(i + n_rows / 2, j + 0,
+    return std::make_unique<QuadrantAoS>(i + n_rows / 2, j + n_cols / 2,
                                          n_rows / 2, n_cols / 2,
                                          aos, left + 2 * (length / 4), length / 4);
 }
 
 std::unique_ptr<Quadrant> QuadrantAoS::sw() const {
-    return std::make_unique<QuadrantAoS>(i + n_rows / 2, j + n_cols / 2,
+    return std::make_unique<QuadrantAoS>(i + n_rows / 2, j + 0,
                                          n_rows / 2, n_cols / 2,
                                          aos, left + 3 * (length / 4), length / 4);
 }
