@@ -1,8 +1,8 @@
+#include "aos_ops.h"
 #include "bottom_up.h"
 #include "colorization.h"
 #include "io.h"
 #include "padding.h"
-#include "quadrant_aos.h"
 
 #include <argparse/argparse.hpp>
 #include <fstream>

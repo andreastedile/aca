@@ -22,7 +22,7 @@ void flatten_to_rgb_soa_impl(const unsigned char* pixels, RGBSoA& soa,
 
 RGBSoA flatten_to_rgb_soa(const unsigned char* pixels, int n_rows, int n_cols) {
     const int n_pixels = n_rows * n_cols;
-    auto soa = RGBSoA{EigenArray(n_pixels), EigenArray(n_pixels), EigenArray(n_pixels)};
+    auto soa = RGBSoA{n_pixels, EigenArray(n_pixels), EigenArray(n_pixels), EigenArray(n_pixels)};
     flatten_to_rgb_soa_impl(pixels, soa, 0, 0, n_rows, n_cols, 0, n_cols);
     return soa;
 }

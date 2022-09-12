@@ -1,8 +1,8 @@
 #include "colorization.h"
 #include "io.h"
 #include "padding.h"
-#include "quadrant_soa.h"
 #include "rgbsoa.h"
+#include "soa_ops.h"
 #include "top_down.h"
 
 #include <argparse/argparse.hpp>
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     spdlog::info("Build quadtree top-down");
     auto construct_start = Clock::now();
-    auto quadtree_root = top_down(std::make_unique<QuadrantSoA>(0, 0, n_rows, n_cols, soa), detail_threshold);
+    auto quadtree_root = top_down(Extents{0, 0, n_rows}, detail_threshold);
     auto construct_end = Clock::now();
 
     if (csv) {

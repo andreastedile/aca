@@ -1,26 +1,23 @@
 #include "bottom_up.h"
+#include "../overloaded.h"
+#include "aos_ops.h"
 #include "qtmath.h"
 #include "quadrant.h"
 #include "quadtree.h"
+#include "rgbaos.h"
 
 #include <future>          // PARALLEL
 #include <spdlog/spdlog.h> // LOG_CONSTRUCTION
 
 #include <cmath>
 
-bool should_merge(float detail_threshold, const RGB<float>& std) {
-    return std.r <= detail_threshold &&
-           std.g <= detail_threshold &&
-           std.b <= detail_threshold;
-}
-
 // source
 // https://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation/442050#442050
-RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw) {
-    auto nw_mean = nw.mean(),
-         ne_mean = ne.mean(),
-         se_mean = se.mean(),
-         sw_mean = sw.mean();
+RGB<float> combine_means(const QtNode& nw, const QtNode& ne, const QtNode& se, const QtNode& sw) {
+    auto nw_mean = mean_of(nw);
+    auto ne_mean = mean_of(ne);
+    auto se_mean = mean_of(se);
+    auto sw_mean = mean_of(sw);
     return {
         (nw_mean.r + ne_mean.r + se_mean.r + sw_mean.r) / 4,
         (nw_mean.g + ne_mean.g + se_mean.g + sw_mean.g) / 4,
@@ -28,15 +25,16 @@ RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree&
     };
 }
 
-RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw, const RGB<float>& mean) {
-    RGB<float> nw_mean = nw.mean(),
-               ne_mean = ne.mean(),
-               se_mean = se.mean(),
-               sw_mean = sw.mean();
-    RGB<float> nw_std = nw.std(),
-               ne_std = ne.std(),
-               se_std = se.std(),
-               sw_std = sw.std();
+RGB<float> combine_stds(const QtNode& nw, const QtNode& ne, const QtNode& se, const QtNode& sw, const RGB<float>& mean) {
+    auto nw_mean = mean_of(nw);
+    auto ne_mean = mean_of(ne);
+    auto se_mean = mean_of(se);
+    auto sw_mean = mean_of(sw);
+
+    auto nw_std = std_of(nw);
+    auto ne_std = std_of(ne);
+    auto se_std = std_of(se);
+    auto sw_std = std_of(sw);
 
     auto combine = [](float nw_std, float ne_std, float se_std, float sw_std,
                       float nw_mean, float ne_mean, float se_mean, float sw_mean,
@@ -56,47 +54,34 @@ RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& 
     };
 }
 
-std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, float detail_threshold, int depth) {
+std::unique_ptr<QtNode> bottom_up_impl(const RGBAoS& aos, const Subquadrant& quadrant, float detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
-    if (quadrant->n_cols == 1) { // A leaf has been reached
-        const auto mean = quadrant->mean();
-#ifdef LOG_CONSTRUCTION
-        spdlog::debug("mean: {}/{}/{}, ", +mean.r, +mean.g, +mean.b);
-#endif
+    const auto visit_extents = [&](const Extents& visited) -> std::unique_ptr<QtNode> {
+        std::unique_ptr<QtNode> nw, ne, se, sw;
 
-        const auto std = RGB<float>{0, 0, 0};
-#ifdef LOG_CONSTRUCTION
-        spdlog::debug("std: {}/{}/{}, ", std.r, std.g, std.b);
-#endif
-        return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
-                                          quadrant->n_rows, quadrant->n_cols,
-                                          Quadtree::Leaf{},
-                                          mean, std);
-    } else {
-        std::unique_ptr<Quadtree> nw, ne, se, sw;
 #ifndef NPARALLEL
         if (depth <= 1) { // Don't overload the system.
             // Spawn 3 threads, and assign 1 subquadrant to each of them.
-            auto nwf = std::async(std::launch::async, bottom_up_impl, quadrant->nw(), detail_threshold, depth + 1);
-            auto nef = std::async(std::launch::async, bottom_up_impl, quadrant->ne(), detail_threshold, depth + 1);
-            auto sef = std::async(std::launch::async, bottom_up_impl, quadrant->se(), detail_threshold, depth + 1);
+            auto nwf = std::async(std::launch::async, bottom_up_impl, aos, nw_subquadrant(visited), detail_threshold, depth + 1);
+            auto nef = std::async(std::launch::async, bottom_up_impl, aos, ne_subquadrant(visited), detail_threshold, depth + 1);
+            auto sef = std::async(std::launch::async, bottom_up_impl, aos, se_subquadrant(visited), detail_threshold, depth + 1);
             nw = nwf.get();
             ne = nef.get();
             se = sef.get();
             // Assign the remaining subquadrant to the current thread.
-            sw = bottom_up_impl(quadrant->sw(), detail_threshold, depth + 1);
+            sw = bottom_up_impl(aos, sw_subquadrant(visited), detail_threshold, depth + 1);
         } else {
-            nw = bottom_up_impl(quadrant->nw(), detail_threshold, depth + 1);
-            ne = bottom_up_impl(quadrant->ne(), detail_threshold, depth + 1);
-            se = bottom_up_impl(quadrant->se(), detail_threshold, depth + 1);
-            sw = bottom_up_impl(quadrant->sw(), detail_threshold, depth + 1);
+            nw = bottom_up_impl(aos, nw_subquadrant(visited), detail_threshold, depth + 1);
+            ne = bottom_up_impl(aos, ne_subquadrant(visited), detail_threshold, depth + 1);
+            se = bottom_up_impl(aos, se_subquadrant(visited), detail_threshold, depth + 1);
+            sw = bottom_up_impl(aos, sw_subquadrant(visited), detail_threshold, depth + 1);
         }
 #else
-        nw = bottom_up_impl(quadrant->nw(), detail_threshold, depth + 1);
-        ne = bottom_up_impl(quadrant->ne(), detail_threshold, depth + 1);
-        se = bottom_up_impl(quadrant->se(), detail_threshold, depth + 1);
-        sw = bottom_up_impl(quadrant->sw(), detail_threshold, depth + 1);
+        nw = bottom_up_impl(aos, nw_subquadrant(extents), detail_threshold, depth + 1);
+        ne = bottom_up_impl(aos, ne_subquadrant(extents), detail_threshold, depth + 1);
+        se = bottom_up_impl(aos, se_subquadrant(extents), detail_threshold, depth + 1);
+        sw = bottom_up_impl(aos, sw_subquadrant(extents), detail_threshold, depth + 1);
 #endif
         auto mean = combine_means(*nw, *ne, *se, *sw);
         auto std = combine_stds(*nw, *ne, *se, *sw, mean);
@@ -105,22 +90,33 @@ std::unique_ptr<Quadtree> bottom_up_impl(std::unique_ptr<Quadrant> quadrant, flo
 #ifdef LOG_CONSTRUCTION
             spdlog::debug("leaf reached");
 #endif
-            return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
-                                              quadrant->n_rows, quadrant->n_cols,
-                                              Quadtree::Leaf{},
-                                              mean, std);
+            auto leaf = Leaf{visited.top_left, RGB<unsigned char>((unsigned char)mean.r, (unsigned char)mean.g, (unsigned char)mean.b)};
+            return std::make_unique<QtNode>(leaf);
         } else {
 #ifdef LOG_CONSTRUCTION
             spdlog::debug("should split");
 #endif
-            return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
-                                              quadrant->n_rows, quadrant->n_cols,
-                                              Quadtree::Fork{std::move(nw), std::move(ne), std::move(se), std::move(sw)},
-                                              mean, std);
+            return std::make_unique<QtNode>(Fork{std::move(nw), std::move(ne), std::move(se), std::move(sw), visited, mean, std});
         }
-    }
+    };
+
+    const auto visit_pixel = [&](const Position& position) -> std::unique_ptr<QtNode> {
+#ifdef LOG_CONSTRUCTION
+        spdlog::debug("mean: {}/{}/{}, ", +mean.r, +mean.g, +mean.b);
+#endif
+
+        const auto std = RGB<float>{0, 0, 0};
+#ifdef LOG_CONSTRUCTION
+        spdlog::debug("std: {}/{}/{}, ", std.r, std.g, std.b);
+#endif
+        auto pixel = compute_pixel(aos, position.i, position.j);
+        auto leaf = Leaf{position, RGB<unsigned char>(pixel.r, pixel.g, pixel.b)};
+        return std::make_unique<QtNode>(leaf);
+    };
+
+    return std::visit(overloaded{visit_extents, visit_pixel}, quadrant);
 }
 
-std::unique_ptr<Quadtree> bottom_up(std::unique_ptr<Quadrant> quadrant, float detail_threshold) {
-    return bottom_up_impl(std::move(quadrant), detail_threshold, 0);
+std::unique_ptr<QtNode> bottom_up(const RGBAoS& aos, float detail_threshold) {
+    return bottom_up_impl(aos, Extents{0, 0, (int)sqrt(aos.n_elements)}, detail_threshold, 0);
 }

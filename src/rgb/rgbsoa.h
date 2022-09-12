@@ -5,6 +5,7 @@
 using EigenArray = Eigen::Array<unsigned char, 1, Eigen::Dynamic>;
 
 struct RGBSoA {
+    int n_elements;
     EigenArray r;
     EigenArray g;
     EigenArray b;

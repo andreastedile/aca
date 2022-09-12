@@ -9,8 +9,8 @@ bool should_merge(float detail_threshold, int height, const RGB<float>& std);
 
 // source
 // https://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation/442050#442050
-RGB<float> combine_means(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw);
+RGB<float> combine_means(const QtNode& nw, const QtNode& ne, const QtNode& se, const QtNode& sw);
 
-RGB<float> combine_stds(const Quadtree& nw, const Quadtree& ne, const Quadtree& se, const Quadtree& sw, const RGB<float>& mean);
+RGB<float> combine_stds(const QtNode& nw, const QtNode& ne, const QtNode& se, const QtNode& sw, const RGB<float>& mean);
 
-std::unique_ptr<Quadtree> bottom_up(std::unique_ptr<Quadrant> quadrant, float detail_threshold);
+std::unique_ptr<QtNode> bottom_up(std::unique_ptr<Extents> quadrant, float detail_threshold);

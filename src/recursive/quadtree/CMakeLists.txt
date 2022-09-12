@@ -1,6 +1,7 @@
 add_library(quadtree quadtree.cpp quadtree.h)
 
 target_link_libraries(quadtree PUBLIC rgb)
+target_link_libraries(quadtree PUBLIC quadrant)
 
 target_link_libraries(quadtree PRIVATE spdlog::spdlog)
 target_link_libraries(quadtree PRIVATE Threads::Threads)

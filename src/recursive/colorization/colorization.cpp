@@ -1,23 +1,17 @@
 #include <cassert>
 #include <variant>
 
+#include "../overloaded.h"
 #include "colorization.h"
 
-template <class... Ts>
-struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-template <class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
-void colorize_impl(unsigned char* pixels, int N_COLS, const Quadtree& quadtree) {
-    auto visit_fork = [&](const Quadtree::Fork& fork) {
+void colorize_impl(unsigned char* pixels, int N_COLS, const QtNode& quadtree) {
+    auto visit_fork = [&](const Fork& fork) {
         colorize_impl(pixels, N_COLS, *fork.nw);
         colorize_impl(pixels, N_COLS, *fork.ne);
         colorize_impl(pixels, N_COLS, *fork.se);
         colorize_impl(pixels, N_COLS, *fork.sw);
     };
-    auto visit_leaf = [&](const Quadtree::Leaf& leaf) {
+    auto visit_leaf = [&](const Leaf& leaf) {
         const auto i_from = quadtree.i;
         const auto j_from = quadtree.j;
 
@@ -33,10 +27,10 @@ void colorize_impl(unsigned char* pixels, int N_COLS, const Quadtree& quadtree) 
         }
     };
 
-    std::visit(overloaded{visit_fork, visit_leaf}, quadtree.data());
+    std::visit(overloaded{visit_fork, visit_leaf}, quadtree);
 }
 
-void colorize(unsigned char* pixels, int n_rows, int n_cols, const Quadtree& quadtree) {
+void colorize(unsigned char* pixels, int n_rows, int n_cols, const QtNode& quadtree) {
     assert(n_rows * n_cols == quadtree.n_rows * quadtree.n_cols);
     colorize_impl(pixels, n_cols, quadtree);
 }

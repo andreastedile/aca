@@ -3,22 +3,24 @@
 #include "quadrant.h"
 #include "rgb.h"
 
-#include <memory>
+#include <variant>
 
-class Quadrant {
-  public:
-    Quadrant(int i, int j, int n_rows, int n_cols);
-
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> nw() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> ne() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> se() const = 0;
-    [[nodiscard]] virtual std::unique_ptr<Quadrant> sw() const = 0;
-
-    [[nodiscard]] virtual RGB<float> mean() const = 0;
-    [[nodiscard]] virtual RGB<float> sq_mean() const = 0;
-
-    const int i;
-    const int j;
-    const int n_rows;
-    const int n_cols;
+struct Position {
+    int i;
+    int j;
 };
+
+struct Extents {
+    Position top_left;
+    int length;
+};
+
+using Subquadrant = std::variant<Extents, Position>;
+
+Subquadrant nw_subquadrant(const Subquadrant& q);
+
+Subquadrant ne_subquadrant(const Subquadrant& q);
+
+Subquadrant se_subquadrant(const Subquadrant& q);
+
+Subquadrant sw_subquadrant(const Subquadrant& q);

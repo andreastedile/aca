@@ -7,4 +7,4 @@
 
 bool should_split(float detail_threshold, int height, const RGB<float>& std);
 
-std::unique_ptr<Quadtree> top_down(std::unique_ptr<Quadrant> quadrant, float detail_threshold);
+std::unique_ptr<QtNode> top_down(std::unique_ptr<Extents> quadrant, float detail_threshold);

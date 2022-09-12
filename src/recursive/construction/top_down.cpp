@@ -13,7 +13,7 @@ bool should_split(float detail_threshold, const RGB<float>& std) {
            std.b > detail_threshold;
 }
 
-std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, float detail_threshold, int depth) {
+std::unique_ptr<QtNode> top_down_impl(std::unique_ptr<Extents> quadrant, float detail_threshold, int depth) {
     assert(detail_threshold >= 0);
 
     const auto mean = quadrant->mean();
@@ -39,7 +39,7 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, floa
         spdlog::debug("should split");
 #endif
 
-        std::unique_ptr<Quadtree> nw, ne, se, sw;
+        std::unique_ptr<QtNode> nw, ne, se, sw;
 #ifndef NPARALLEL
         if (depth <= 1) { // Don't overload the system.
             // Spawn 3 threads, and assign 1 subquadrant to each of them.
@@ -63,21 +63,21 @@ std::unique_ptr<Quadtree> top_down_impl(std::unique_ptr<Quadrant> quadrant, floa
         se = top_down_impl(quadrant->se(), detail_threshold, depth + 1);
         sw = top_down_impl(quadrant->sw(), detail_threshold, depth + 1);
 #endif
-        return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
-                                          quadrant->n_rows, quadrant->n_cols,
-                                          Quadtree::Fork{std::move(nw), std::move(ne), std::move(se), std::move(sw)},
-                                          mean, std);
+        return std::make_unique<QtNode>(quadrant->i, quadrant->j,
+                                        quadrant->n_rows, quadrant->n_cols,
+                                        QtNode::Fork{std::move(nw), std::move(ne), std::move(se), std::move(sw)},
+                                        mean, std);
     } else {
 #ifdef LOG_CONSTRUCTION
         spdlog::debug("leaf reached");
 #endif
-        return std::make_unique<Quadtree>(quadrant->i, quadrant->j,
-                                          quadrant->n_rows, quadrant->n_cols,
-                                          Quadtree::Leaf{},
-                                          mean, std);
+        return std::make_unique<QtNode>(quadrant->i, quadrant->j,
+                                        quadrant->n_rows, quadrant->n_cols,
+                                        QtNode::Leaf{},
+                                        mean, std);
     }
 }
 
-std::unique_ptr<Quadtree> top_down(std::unique_ptr<Quadrant> quadrant, float detail_threshold) {
+std::unique_ptr<QtNode> top_down(std::unique_ptr<Extents> quadrant, float detail_threshold) {
     return top_down_impl(std::move(quadrant), detail_threshold, 0);
 }

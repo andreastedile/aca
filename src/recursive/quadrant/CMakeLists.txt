@@ -1,7 +1,7 @@
 add_library(quadrant
         quadrant.cpp quadrant.h
-        quadrant_soa.cpp quadrant_soa.h
-        quadrant_aos.cpp quadrant_aos.h)
+        soa_ops.cpp soa_ops.h
+        aos_ops.cpp aos_ops.h)
 
 target_link_libraries(quadrant PUBLIC rgb)
 
