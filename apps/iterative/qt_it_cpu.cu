@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     Node* h_quadtree_array = new Node[n_nodes];
     auto allocate_on_host_end = Clock::now();
 
-    omp_set_num_threads(8);
+    omp_set_num_threads(16);
     spdlog::info("Init leaves on host");
     auto init_leaves_on_host_start = Clock::now();
     init_quadtree_array_leaves_host(h_quadtree_array, tree_height, h_aos);
