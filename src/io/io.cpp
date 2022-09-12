@@ -19,6 +19,7 @@ unsigned char* read_image(const std::string& input, int& n_rows, int& n_cols) {
         pixels = new_pixels.value();
         spdlog::info("Image was padded, now is {}x{}", n_rows, n_cols);
     }
+    return pixels;
 }
 
 void write_image(unsigned char* pixels, const std::string& output, int n_rows, int n_cols) {
