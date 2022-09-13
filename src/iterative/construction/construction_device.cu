@@ -23,7 +23,7 @@ __device__ void init_quadtree_array_leaves_device(RGBAoS aos, Node* quadtree_nod
 
 __global__ void construct_quadtree_array_device(Node* g_nodes, int tree_height, RGBAoS aos, float detail_threshold, int n_leaves_per_thread) {
     init_quadtree_array_leaves_device(aos, g_nodes, tree_height, n_leaves_per_thread);
-    __syncthreads();
+    // __syncthreads();
 
     // Number of pixels contained in the subquadrant represented by a node at the level immediately below.
     // Below this level are the leaves, each representing 1 pixel.
