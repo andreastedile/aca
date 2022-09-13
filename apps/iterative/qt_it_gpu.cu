@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
     app.add_argument("-b", "--blocks")
         .scan<'d', int>()
         .default_value(1024)
-        .help("specify the number of blocks in the kernel launch");
+        .help("specify the number of blocks in the kernel launch: must be a power of four");
     app.add_argument("-t", "--threads")
         .scan<'d', int>()
         .default_value(256)
-        .help("specify the number of thread per blocks in the kernel launch");
+        .help("specify the number of thread per blocks in the kernel launch: must be a power of four");
     app.add_argument("--no-output-file")
         .default_value(false)
         .implicit_value(true)
@@ -61,6 +61,8 @@ int main(int argc, char* argv[]) {
     unsigned char* pixels = read_image(input, n_rows, n_cols);
 
     int n_pixels = n_rows * n_cols;
+
+    check_nblocks_nthreads(n_blocks, n_threads, n_pixels);
 
     spdlog::info("Flatten to RGB AoS");
     auto flatten_start = Clock::now();
