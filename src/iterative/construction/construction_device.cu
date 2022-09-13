@@ -12,7 +12,6 @@ __device__ void init_quadtree_array_leaves_device(RGBAoS aos, Node* quadtree_nod
                                   n_higher_nodes +
                                   n_leaves_per_thread * (block_offset + threadIdx.x);
 
-#pragma unroll
     for (int i = 0; i < n_leaves_per_thread; i++) {
         current_thread_leaves[i] = Node(
             {float(read_ptr[i].r), float(read_ptr[i].g), float(read_ptr[i].b)}, // mean
@@ -32,13 +31,11 @@ __global__ void construct_quadtree_array_device(Node* g_nodes, int tree_height, 
     Node* lower_level_nodes = g_nodes + n_nodes_at_higher_levels + current_level_n_nodes;
     Node* current_level_nodes = g_nodes + n_nodes_at_higher_levels;
 
-#pragma unroll
     for (int n_nodes_to_produce = div4(n_leaves_per_thread);
          n_nodes_to_produce >= 1;
          n_nodes_to_produce = div4(n_nodes_to_produce)) {
         int thread_nodes_idx = n_nodes_to_produce * (blockIdx.x * blockDim.x + threadIdx.x);
 
-#pragma unroll
         for (int i = 0; i < n_nodes_to_produce; i++) {
             int node_idx = thread_nodes_idx + i;
             int children_idx = times4(node_idx);
